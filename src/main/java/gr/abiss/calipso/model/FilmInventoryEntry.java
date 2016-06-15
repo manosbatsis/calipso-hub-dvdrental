@@ -33,6 +33,12 @@ public class FilmInventoryEntry  extends AbstractAuditable<User> {
 	private List<Rental> rentals;
 
 	public FilmInventoryEntry() {
+		super();
+	}
+
+	public FilmInventoryEntry(Film film) {
+		this();
+		this.film = film;
 	}
 
 	public Film getFilm() {

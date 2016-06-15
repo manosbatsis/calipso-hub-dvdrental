@@ -3,6 +3,7 @@ package gr.abiss.calipso;
 
 import gr.abiss.calipso.model.Film;
 import gr.abiss.calipso.model.FilmActor;
+import gr.abiss.calipso.model.FilmInventoryEntry;
 import gr.abiss.calipso.model.FilmPricingStrategy;
 import gr.abiss.calipso.model.MpaaRating;
 import gr.abiss.calipso.model.Role;
@@ -49,17 +50,13 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
     private DataSource dataSource;
 
 	protected void initDatabaseMigration() {
-
         // Create the Flyway instance
         Flyway flyway = new Flyway();
-
         // Point to the database
         flyway.setDataSource(this.dataSource);
-        
         // misc config
         flyway.setBaselineOnMigrate(true);
         flyway.setValidateOnMigrate(false);
-        
         // Start the migration
         flyway.migrate();
 	}
@@ -72,16 +69,27 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 	@Named("roleService")
 	private RoleService roleService;
 
+	// service is created by calipso using using javassist at runtime so we use a generic definition
 	@Inject
 	@Named("filmService")
 	private ModelService<Film, String> filmService;
-	
+
+	// service is created by calipso using using javassist at runtime so we use a generic definition
 	@Inject
 	@Named("filmActorService")
 	private ModelService<FilmActor, String> filmActorService;
 
+	// service is created by calipso using using javassist at runtime so we use a generic definition
+	@Inject
+	@Named("filmInventoryEntryService")
+	private ModelService<FilmInventoryEntry, String> filmInventoryEntryService;
+	
+	/**
+	 * @PostInitialize sample data for films, inventory entries etc.
+	 */
 	@PostInitialize
 	public void init() {
+		
 		// init calipso defaults
 		super.init();
 		
@@ -141,15 +149,32 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 		//this.initDatabaseMigration();
 	}
 
+	/**
+	 * Create a film and an inventory entry 
+	 * @param title
+	 * @param desc
+	 * @param mpaaRating
+	 * @param keanuReeves
+	 * @return
+	 */
 	private Film createFilm(String title, String desc, MpaaRating mpaaRating, FilmActor keanuReeves) {
 		Film film;
 		film = new Film();
 		film.setTitle(title);
 		film.setDescription(desc);
 		film.addActor(keanuReeves);
-		return filmService.create(film);
+		film = filmService.create(film);
+		// create an inventory entry that corresponds to a physical copy
+		filmInventoryEntryService.create(new FilmInventoryEntry(film));
+		return film;
 	}
 
+	/**
+	 * Create a film actor
+	 * @param firstName
+	 * @param lastName
+	 * @return
+	 */
 	private FilmActor createActor(String firstName, String lastName) {
 		FilmActor actor = new FilmActor();
 		actor.setFirstName(firstName);

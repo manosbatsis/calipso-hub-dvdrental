@@ -40,11 +40,7 @@
 				<requirejs.resources>${project.build.directory}/requirejs/build</requirejs.resources>
 			</properties>
 			<build>
-
 				<plugins>
-
-
-
 					<plugin>
 						<groupId>com.github.bringking</groupId>
 						<artifactId>requirejs-maven-plugin</artifactId>
@@ -121,8 +117,6 @@
 		</profile>
 	</profiles>
 	<dependencies>
-
-
 		<dependency>
 			<groupId>gr.abiss.calipso</groupId>
 			<artifactId>calipso-hub-webapp</artifactId>
@@ -137,14 +131,12 @@
 			<version>${project.version}</version>
 			<type>pom</type>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<!-- Testing dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -157,6 +149,11 @@
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-test</artifactId>
+		    <version>${spring-security.version}</version>
 		</dependency>
 		<!-- dependency> <groupId>org.assertj</groupId> <artifactId>assertj-core</artifactId> 
 			<version>3.4.1</version> </dependency> <dependency> <groupId>org.mockito</groupId> 
@@ -181,6 +178,11 @@
 		      <version>3.0.0</version>
 		      <scope>test</scope>
 		</dependency>
+		<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20160212</version>
+</dependency>
 
 	</dependencies>
 	<build>
@@ -193,9 +195,28 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<testResources>
+        <testResource>
+            <directory>${project.basedir}/src/test/resources</directory>
+        </testResource>
+        <testResource>
+            <directory>${project.basedir}/src/main/resources</directory>
+        </testResource>
+    </testResources>
 		<plugins>
 
-
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-surefire-plugin</artifactId>
+		    <version>2.19.1</version>
+		    <dependencies>
+		      <dependency>
+		        <groupId>org.apache.maven.surefire</groupId>
+		        <artifactId>surefire-junit47</artifactId>
+		        <version>2.19.1</version>
+		      </dependency>
+		    </dependencies>
+		  </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -348,7 +369,7 @@
 						<id>start-jetty</id>
 						<phase>pre-integration-test</phase>
 						<goals>
-							<!-- stop any previous instance to free up the port -->
+<!-- 							stop any previous instance to free up the port -->
 							<goal>stop</goal>
 							<goal>start</goal>
 						</goals>
