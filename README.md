@@ -2,6 +2,55 @@
 Calipso-hub tutorial/example project
 
 
+## Sample Workflow
+
+Sample workflow of an application client used by clerk on the store counter. The client may have to hold references of objects in memory as indicated in the "notes" since the services API is totally stateless.
+
+### Scan Client Card
+
+Scan the 2D barcode of the client card to retrieve the corresponding user:
+
+Method | URL
+-------|--------
+GET | http://localhost:8080/calipso/api/rest/filmInventoryEntries/:userId
+
+Notes
+
+- The API client is able to authenticate each request (required role: staff or admin)
+- The API client must store the user until the end of the workflow (either payment or abort).
+
+### Scan DVD boxes
+
+Scan the 2D barcode of each physical copy and use the utility "order" endpoint to get the cost as appropriate for both new and returned rentals
+
+Method | URL
+-------|--------
+GET | http://localhost:8080/calipso/api/rest/order/filmInventoryOrder/:filmInventoryEntryId?days
+
+The <code>days</code> can be used to calculate the advance cost for new rentals. The clients state the number of days they intent to rent the inventory entry for and the service calculates the cost according to the pricing strategy of the film. The days parameter is ignored for returns.
+
+Name        | Type    | Description
+------------|---------|------------
+inventoryId | string  | The UUID of the inventory entry
+filmTitle   | string  | The film title
+filmMpaa    | string  | The film MPAA rating (unrated, G, PG, PG-13, R, NC-17)
+rentalId    | string  | The UUID of the current inventory rental or null if new (i.e. if the inventory entry is available)
+cost        | float   | The initial or pending cost for the inventory entry rental
+days        | int     | The number of days included in the cost
+pricingStrategy | object | The pricinig strategy, see [Film Pricing Strategies](#film_pricing_strategies)
+
+Notes
+- The API client is able to authenticate each request (required role: staff or admin)
+- The API client can store the entry for use in the next step, update with a new request to adjust the days or discard it at any time (i.e. if the store client changed his mind)
+
+### Submit Payment
+
+TODO
+
+## API Reference
+
+The following sections document parts of the services API.
+
 ### DVD Inventory
 
 The DVD inventory endpoints refer to the actual physical DVD boxes available for rent by the store.
@@ -91,8 +140,71 @@ createdDate | timestamp
 lastModifiedBy | UUID string
 lastModifiedDate | timestamp
 
-## Sample Workflow
 
-Scan the 2D barcode of physical copy and load the corresponding inventory entry:
+### Film Pricing Strategies
 
-GET http://localhost:8080/calipso/api/rest/filmInventoryEntries/:id
+
+The store has three types of films.
+
+<ul>
+<li>New releases – Price is <premium price> times number of days rented.</li>
+<li>Regular films – Price is <basic price> for the fist 3 days and then
+<basic price> times the number of days over 3.</li>
+<li>Old film - Price is <basic price> for the fist 5 days and then <basic
+price> times the number of days over 5</li>
+</ul>
+
+This is modeled in three properties:
+
+<dl>
+  <dt><code>initialPrice</code></dt>
+  <dd>the price to rent a film</dd>
+  <dt><code>daysFree</code></dt>
+  <dd>the number of days included in the <code>initialPrice</code></dd>
+  <dt><code>dailyPrice</code></dt>
+  <dd>the price per day (not counting <code>daysFree</code>)</dd>
+</dl>
+
+Action | Method | URL | Request body
+-------|--------|-----|-----------------
+Create | POST |  http://localhost:8080/calipso/api/rest/filmPricingStrategies | JSON
+Update | PUT |  http://localhost:8080/calipso/api/rest/filmPricingStrategies | JSON
+Search  | GET |  http://localhost:8080/calipso/api/rest/filmPricingStrategies?:paramN=valueN | ignored
+
+Search parameters:
+
+Name | Type
+-----|------
+id | UUID string
+initialPrice | float
+daysFree | int
+dailyPrice | float
+createdBy | UUID string
+createdDate | timestamp
+lastModifiedBy | UUID string
+lastModifiedDate | timestamp
+
+
+### Rentals
+
+Inventory rentals
+
+Action | Method | URL | Request body
+-------|--------|-----|-----------------
+Create | POST |  http://localhost:8080/calipso/api/rest/rentals | JSON
+Update | PUT |  http://localhost:8080/calipso/api/rest/rentals | JSON
+Search  | GET |  http://localhost:8080/calipso/api/rest/rentals?:paramN=valueN | ignored
+
+Search parameters:
+
+Name | Type
+-----|------
+id | UUID string
+customer | UUID string
+inventory | UUID string
+createdBy | UUID string
+rentalDate | timestamp
+returnDate | timestamp
+createdDate | timestamp
+lastModifiedBy | UUID string
+lastModifiedDate | timestamp
