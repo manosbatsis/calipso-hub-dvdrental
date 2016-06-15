@@ -3,11 +3,14 @@ package gr.abiss.calipso.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import gr.abiss.calipso.model.User;
 import gr.abiss.calipso.model.entities.AbstractAuditable;
@@ -23,12 +26,16 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
 public class FilmInventoryEntry  extends AbstractAuditable<User> {
 	private static final long serialVersionUID = 1L;
 
+	@Column(nullable = false)
+	private Boolean available = true;
+
 	// bi-directional many-to-one association to Film
 	@ManyToOne
-	@JoinColumn(name = "film_id")
+	@JoinColumn(name = "film_id", nullable = false)
 	private Film film;
 
 	// bi-directional many-to-one association to Rental
+	@JsonIgnore
 	@OneToMany(mappedBy = "inventory")
 	private List<Rental> rentals;
 

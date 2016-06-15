@@ -38,6 +38,10 @@ public class Film extends AbstractAuditable<User> {
 	@Lob
 	private String description;
 
+	@Column(name = "mpaa_rating")
+	private MpaaRating mpaaRating = MpaaRating.UNRATED;
+
+	@Column(name = "runtime_seconds")
 	private int runtimeInSeconds;
 
 	@Temporal(TemporalType.DATE)

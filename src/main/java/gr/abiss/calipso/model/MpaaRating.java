@@ -1,6 +1,7 @@
 package gr.abiss.calipso.model;
 
 public enum MpaaRating {
+	UNRATED("unrated"), 
 	G, 
 	PG, 
 	PG13("PG-13"), 
