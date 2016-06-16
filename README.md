@@ -1,6 +1,52 @@
 # calipso-hub-dvdrental
-Calipso-hub tutorial/example project
 
+This project demonstrates how to use  [Calipso-Hub](https://github.com/abissgr/calipso-hub) to build a DVD Rental Store app with minimal effort.
+
+
+- [Architecture and Current Status](#architecture-and-current-status)
+	- [Front-end](#front-end)
+	- [Back-end](#back-end)
+	- [Tests](#tests)
+- [Build and Run](#build-and-run)
+- [Sample Workflow](#sample-workflow)
+	- [Scan Client Card](#scan-client-card)
+	- [Scan DVD boxes](#scan-dvd-boxes)
+	- [Submit Payment](#submit-payment)
+- [API Reference](#api-reference)
+	- [Orders](#orders)
+	- [DVD Inventory](#dvd-inventory)
+	- [Films](#films)
+	- [Film Actors](#film-actors)
+	- [Film Categories](#film-categories)
+	- [Film Pricing Strategies](#film-pricing-strategies)
+	- [Rentals](#rentals)
+
+
+### Architecture and Current Status
+
+#### Front-end
+
+The front end is based on backbone marionette and provided by the calipso overlay WAR. Backbone models are the only code pending to provide an administrative SCRUD UI (thanks to calipso's use-case driven front-end), unless those models [become optional first](https://github.com/abissgr/calipso-hub/issues/26).
+
+#### Back-end
+
+Most SCRUD endpoints [documented bellow](#api_reference) use Controller/Service/Repository classes generated automatically by calipso on startup using javassist. The small amounts of business logic and custom methods can be found in the few custom components in the code. The larger part of the code is simple JPA entity models.
+
+The only manually created endpoint is that of [Orders](#orders)
+
+#### Tests
+
+New rentals and returns are tested on startup by [code in application initializer](https://github.com/manosbatsis/calipso-hub-dvdrental/blob/master/src/main/java/gr/abiss/calipso/DvdRentalAppInitializer.java#L172) as shown bellow but this needs to be refactored to integration tests run in-conainer during  POM's integration profile (see also [#1](https://github.com/manosbatsis/calipso-hub-dvdrental/issues/1)).
+
+![console output of DvdRentalAppInitializer](etc/img/)
+
+## Build and Run
+
+a) Clone the repository
+b) Copy HOWTO.txt to dev.properties
+c) mvn build install jetty:run
+
+If you want to use the integration build profile to run tests or optimize client-side code you need to have [node](https://nodejs.org) installed.
 
 ## Sample Workflow
 
@@ -69,6 +115,18 @@ totalCost   | float       | he total cost of enclosed payments
 ## API Reference
 
 The following sections document parts of the services API. The application exposes more endpoints for auth and SCRUD; those are "inherited" by the calipso-hub-webapp [WAR overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html).
+
+With the exception of [Orders](#orders),  endpoints are based on code tiers (Controller, Service, Repository) calipso generated using javassist during application initialization.
+
+
+### Orders
+
+Orders endpoints use DTOs and manually written code to provide the convenient API used in the [Sample Workflow](#sample_workflow).
+
+Action          | Method | URL | Request JSON body  | Response JSON body
+----------------|--------|-----|---------------|--
+Calculate order | GET    |  http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?days | none | Order DTO
+Finalize orders | POST |  http://localhost:8080/calipso/api/rest/order/orders | Orders DTO  | Payments DTO
 
 ### DVD Inventory
 
