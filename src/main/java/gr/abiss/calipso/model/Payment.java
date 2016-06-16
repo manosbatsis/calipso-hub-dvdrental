@@ -22,24 +22,40 @@ public class Payment extends AbstractAuditable<User> {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The days paid for
+	 */
+	private Integer days;
+
+	/**
+	 * The amount paid
+	 */
 	private BigDecimal amount;
 
 	// bi-directional many-to-one association to Customer
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "customer_id")
 	private User customer;
 
 	// bi-directional many-to-one association to Rental
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "rental_id")
 	private Rental rental;
 
 	// bi-directional many-to-one association to Staff
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "staff_id")
 	private User staff;
 
 	public Payment() {
+	}
+
+	public Integer getDays() {
+		return days;
+	}
+
+	public void setDays(Integer days) {
+		this.days = days;
 	}
 
 	public BigDecimal getAmount() {
@@ -74,4 +90,48 @@ public class Payment extends AbstractAuditable<User> {
 		this.staff = staff;
 	}
 
+	public static class Builder {
+		private Integer days;
+		private BigDecimal amount;
+		private User customer;
+		private Rental rental;
+		private User staff;
+
+		public Builder days(Integer days) {
+			this.days = days;
+			return this;
+		}
+
+		public Builder amount(BigDecimal amount) {
+			this.amount = amount;
+			return this;
+		}
+
+		public Builder customer(User customer) {
+			this.customer = customer;
+			return this;
+		}
+
+		public Builder rental(Rental rental) {
+			this.rental = rental;
+			return this;
+		}
+
+		public Builder staff(User staff) {
+			this.staff = staff;
+			return this;
+		}
+
+		public Payment build() {
+			return new Payment(this);
+		}
+	}
+
+	private Payment(Builder builder) {
+		this.days = builder.days;
+		this.amount = builder.amount;
+		this.customer = builder.customer;
+		this.rental = builder.rental;
+		this.staff = builder.staff;
+	}
 }

@@ -4,7 +4,13 @@ Calipso-hub tutorial/example project
 
 ## Sample Workflow
 
-Sample workflow of an application client used by clerk on the store counter. The client may have to hold references of objects in memory as indicated in the "notes" since the services API is totally stateless.
+Sample workflow of an application client used by clerk on the store counter. The client may have to hold references of objects in memory as indicated in the "notes" since the services API is totally stateless. The workflow has three simple steps:
+
+- Scan Client Card
+- Scan DVD boxes
+- Submit Payment
+
+The steps are explained in detail within the following sections.
 
 ### Scan Client Card
 
@@ -21,13 +27,13 @@ Notes
 
 ### Scan DVD boxes
 
-Scan the 2D barcode of each physical copy and use the utility "order" endpoint to get the cost as appropriate for both new and returned rentals
+Scan the 2D barcode of each physical copy and use the utility "orders" endpoint to get an Order object that includes the appropriate cost for both new and returned rentals
 
 Method | URL
 -------|--------
-GET | http://localhost:8080/calipso/api/rest/order/filmInventoryOrder/:filmInventoryEntryId?days
+GET | http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?days
 
-The <code>days</code> can be used to calculate the advance cost for new rentals. The clients state the number of days they intent to rent the inventory entry for and the service calculates the cost according to the pricing strategy of the film. The days parameter is ignored for returns.
+The <code>days</code> can be used to control the cost for new rentals. The clients state the number of days they intent to rent the inventory entry for and the service calculates the cost according to the pricing strategy of the film. The days parameter is ignored for returns, in which case the current date is used to calculate any amount due for late returns.
 
 Name        | Type    | Description
 ------------|---------|------------
@@ -45,11 +51,26 @@ Notes
 
 ### Submit Payment
 
-TODO
+Once ready, the staff can submit the set of orders for payment by submitting a POST request, using an Orders object as the JSON body.
+
+
+Method | URL
+-------|--------
+GET | http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?days
+
+The Orders object has the following properties:
+
+Name        | Type        | Description
+------------|-------------|------------
+orders      | collection  | The enclosed orders to finalize
+totalCost   | float       | he total cost of enclosed orders
+customer    | user object (only id is required) | The customer performing the given orders
+
+The customer returning inventory items need not be the same as the one that rented them. This is useful in various household etc. scenarios.
 
 ## API Reference
 
-The following sections document parts of the services API.
+The following sections document parts of the services API. The application exposes more endpoints for auth and SCRUD; those are "inherited" by the calipso-hub-webapp [WAR overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html).
 
 ### DVD Inventory
 

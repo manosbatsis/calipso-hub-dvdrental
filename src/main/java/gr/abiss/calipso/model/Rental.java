@@ -3,6 +3,8 @@ package gr.abiss.calipso.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import gr.abiss.calipso.model.User;
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
@@ -30,6 +32,7 @@ public class Rental extends AbstractAuditable<User> {
 	private Date returnDate;
 
 	// bi-directional many-to-one association to Payment
+	@JsonIgnore
 	@OneToMany(mappedBy = "rental")
 	private List<Payment> payments;
 
@@ -38,15 +41,9 @@ public class Rental extends AbstractAuditable<User> {
 	@JoinColumn(name = "customer_id")
 	private User customer;
 
-	// bi-directional many-to-one association to Inventory
 	@ManyToOne
 	@JoinColumn(name = "inventory_id")
 	private FilmInventoryEntry inventory;
-
-	// bi-directional many-to-one association to Staff
-	@ManyToOne
-	@JoinColumn(name = "staff_id")
-	private User staff;
 
 	public Rental() {
 	}
@@ -91,12 +88,48 @@ public class Rental extends AbstractAuditable<User> {
 		this.inventory = inventory;
 	}
 
-	public User getStaff() {
-		return staff;
+	public static class Builder {
+		private Date rentalDate;
+		private Date returnDate;
+		private List<Payment> payments;
+		private User customer;
+		private FilmInventoryEntry inventory;
+
+		public Builder rentalDate(Date rentalDate) {
+			this.rentalDate = rentalDate;
+			return this;
+		}
+
+		public Builder returnDate(Date returnDate) {
+			this.returnDate = returnDate;
+			return this;
+		}
+
+		public Builder payments(List<Payment> payments) {
+			this.payments = payments;
+			return this;
+		}
+
+		public Builder customer(User customer) {
+			this.customer = customer;
+			return this;
+		}
+
+		public Builder inventory(FilmInventoryEntry inventory) {
+			this.inventory = inventory;
+			return this;
+		}
+
+		public Rental build() {
+			return new Rental(this);
+		}
 	}
 
-	public void setStaff(User staff) {
-		this.staff = staff;
+	private Rental(Builder builder) {
+		this.rentalDate = builder.rentalDate;
+		this.returnDate = builder.returnDate;
+		this.payments = builder.payments;
+		this.customer = builder.customer;
+		this.inventory = builder.inventory;
 	}
-
 }

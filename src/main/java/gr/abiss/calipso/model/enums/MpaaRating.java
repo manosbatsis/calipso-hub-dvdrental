@@ -1,4 +1,4 @@
-package gr.abiss.calipso.model;
+package gr.abiss.calipso.model.enums;
 
 public enum MpaaRating {
 	UNRATED("unrated"), 

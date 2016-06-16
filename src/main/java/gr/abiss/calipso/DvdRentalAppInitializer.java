@@ -5,9 +5,9 @@ import gr.abiss.calipso.model.Film;
 import gr.abiss.calipso.model.FilmActor;
 import gr.abiss.calipso.model.FilmInventoryEntry;
 import gr.abiss.calipso.model.FilmPricingStrategy;
-import gr.abiss.calipso.model.MpaaRating;
 import gr.abiss.calipso.model.Role;
 import gr.abiss.calipso.model.User;
+import gr.abiss.calipso.model.enums.MpaaRating;
 import gr.abiss.calipso.service.RoleService;
 import gr.abiss.calipso.service.UserService;
 import gr.abiss.calipso.tiers.service.ModelService;
@@ -78,6 +78,11 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 	@Inject
 	@Named("filmActorService")
 	private ModelService<FilmActor, String> filmActorService;
+	
+	// service is created by calipso using using javassist at runtime so we use a generic definition
+	@Inject
+	@Named("filmPricingStrategyService")
+	private ModelService<FilmPricingStrategy, String> filmPricingStrategyService;
 
 	// service is created by calipso using using javassist at runtime so we use a generic definition
 	@Inject
@@ -91,20 +96,27 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 	public void init() {
 		
 		// init calipso defaults
+		// ---------------------------
 		super.init();
 		
+		// create staff role
+		// ---------------------------
+		Role staffRole = new Role("ROLE_STAFF", "Store Staff.");
+		staffRole = roleService.create(staffRole);
 
+		// prices
+		// ---------------------------
 		BigDecimal premiumPrice = new BigDecimal(40.0); 
 		BigDecimal basicPrice = new BigDecimal(30.0); 
 		
 		// create pricing strategies
 		// ---------------------------
-		// New releases – Price is <premium price> times number of days rented.
-		FilmPricingStrategy newReleases = new FilmPricingStrategy("New releases", null, 0, premiumPrice);
-		// Regular films – Price is <basic price> for the fist 3 days and then <basic price> times the number of days over 3. 
-		FilmPricingStrategy regularFilms = new FilmPricingStrategy("Regular films", basicPrice, 3, basicPrice);
-		// Old film - Price is <basic price> for the fist 5 days and then <basic price> times the number of days over 5
-		FilmPricingStrategy oldFilms = new FilmPricingStrategy("Regular films", basicPrice, 5, basicPrice);
+		// New releases – Price is <premium price> times number of days rented. 2 bonus points.
+		FilmPricingStrategy newReleases = this.filmPricingStrategyService.create(new FilmPricingStrategy("New releases", premiumPrice, 1, premiumPrice, 2));
+		// Regular films – Price is <basic price> for the fist 3 days and then <basic price> times the number of days over 3. 1 bonus point.
+		FilmPricingStrategy regularFilms = this.filmPricingStrategyService.create(new FilmPricingStrategy("Regular films", basicPrice, 3, basicPrice, 1));
+		// Old film - Price is <basic price> for the fist 5 days and then <basic price> times the number of days over 5. 1 bonus point.
+		FilmPricingStrategy oldFilms = this.filmPricingStrategyService.create(new FilmPricingStrategy("Regular films", basicPrice, 5, basicPrice, 1));
 
 		// create actors
 		// ---------------------------
@@ -112,41 +124,46 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 		FilmActor tobeyMaguire = createActor("Tobey", "Maguire");
 		FilmActor merylStreep = createActor("Meryl", "Streep");
 		
-		
-
 		// create films
 		// ---------------------------
 		Film matrix11 = createFilm(
 			"Matrix 11", 
 			"Neo tries canned beans", 
+			newReleases,
 			MpaaRating.R, 
 			keanuReeves
 		);
 		Film spiderMan = createFilm(
 			"Spider-Man", 
-			"When bitten by a genetically modified spider, a nerdy, shy, and awkward high school student gains spider-like abilities that he eventually must use to fight evil as a superhero after tragedy befalls his family.", 
+			"When bitten by a genetically modified spider, a nerdy, shy, and awkward high school student gains spider-like abilities that he eventually must use to fight evil as a superhero after tragedy befalls his family.",
+			regularFilms, 
 			MpaaRating.PG13, 
 			tobeyMaguire
 		);
 		Film spiderMan2 = createFilm(
 			"Spider-Man", 
-			"Peter Parker is beset with troubles in his failing personal life as he battles a brilliant scientist named Doctor Otto Octavius.",  
+			"Peter Parker is beset with troubles in his failing personal life as he battles a brilliant scientist named Doctor Otto Octavius.",
+			regularFilms, 
 			MpaaRating.PG13, 
 			tobeyMaguire
 		);
 
 		Film outOfAfrica = createFilm(
 			"Out of Africa", 
-			"In 20th-century colonial Kenya, a Danish baroness/plantation owner has a passionate love affair with a free-spirited big-game hunter.",  
+			"In 20th-century colonial Kenya, a Danish baroness/plantation owner has a passionate love affair with a free-spirited big-game hunter.",
+			oldFilms,
 			MpaaRating.PG, 
 			merylStreep
 		);
 		
-		Configuration config = ConfigurationFactory.getConfiguration();
-		boolean initData = config.getBoolean(ConfigurationFactory.INIT_DATA, true);
+		// create data for integration tests
+		// ---------------------------
+//		Matrix 11 (New release) 1 days 40 SEK
+//		Spider Man (Regular rental) 5 days 90 SEK
+//		Spider Man 2 (Regular rental) 2 days 30 SEK
+//		Out of Africa (Old film) 7 days 90 SEK
+//		Total price: 250 SEK
 		
-		
-		//this.initDatabaseMigration();
 	}
 
 	/**
@@ -157,11 +174,13 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 	 * @param keanuReeves
 	 * @return
 	 */
-	private Film createFilm(String title, String desc, MpaaRating mpaaRating, FilmActor keanuReeves) {
+	private Film createFilm(String title, String desc, FilmPricingStrategy pricingStrategy, MpaaRating mpaaRating, FilmActor keanuReeves) {
 		Film film;
 		film = new Film();
 		film.setTitle(title);
 		film.setDescription(desc);
+		film.setPricingStrategy(pricingStrategy);
+		film.setMpaaRating(mpaaRating);
 		film.addActor(keanuReeves);
 		film = filmService.create(film);
 		// create an inventory entry that corresponds to a physical copy

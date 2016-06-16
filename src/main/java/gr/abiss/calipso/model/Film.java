@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import gr.abiss.calipso.model.User;
 import gr.abiss.calipso.model.entities.AbstractAuditable;
+import gr.abiss.calipso.model.enums.MpaaRating;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
 
 /**
@@ -56,12 +57,18 @@ public class Film extends AbstractAuditable<User> {
 	@Column(name = "locale", nullable = false)
 	private String primaryLanguage = "en";
 
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "pricing_strategy_id")
+	private FilmPricingStrategy pricingStrategy;
+
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "film_filmactors", joinColumns = { @JoinColumn(name = "actor_id") }, inverseJoinColumns = { @JoinColumn(name = "film_id") })
+	@JoinTable(name = "film_filmactors", joinColumns = { @JoinColumn(name = "actor_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "film_id") })
 	private List<FilmActor> filmActors;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "film_categories", joinColumns = { @JoinColumn(name = "category_id") }, inverseJoinColumns = { @JoinColumn(name = "film_id") })
+	@JoinTable(name = "film_categories", joinColumns = { @JoinColumn(name = "category_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "film_id") })
 	private List<FilmCategory> filmCategories;
 
 	// bi-directional many-to-one association to Inventory
@@ -72,25 +79,33 @@ public class Film extends AbstractAuditable<User> {
 	public Film() {
 	}
 
+	public boolean addActor(FilmActor actor) {
+		if (this.getFilmActors() == null) {
+			this.filmActors = new LinkedList<FilmActor>();
+		}
+		return this.filmActors.add(actor);
+	}
+
+	public boolean addCategory(FilmCategory category) {
+		if (this.getFilmCategories() == null) {
+			this.filmCategories = new LinkedList<FilmCategory>();
+		}
+		return this.filmCategories.add(category);
+	}
+
 	public Film(String title) {
 		super();
 		this.title = title;
 	}
 
-	public boolean addActor(FilmActor actor){
-		if(this.getFilmActors() == null){
-			this.filmActors = new LinkedList<FilmActor>();
-		}
-		return this.filmActors.add(actor);
+	public MpaaRating getMpaaRating() {
+		return mpaaRating;
 	}
-	
-	public boolean addCategory(FilmCategory category){
-		if(this.getFilmCategories() == null){
-			this.filmCategories = new LinkedList<FilmCategory>();
-		}
-		return this.filmCategories.add(category);
+
+	public void setMpaaRating(MpaaRating mpaaRating) {
+		this.mpaaRating = mpaaRating;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -137,6 +152,14 @@ public class Film extends AbstractAuditable<User> {
 
 	public void setPrimaryLanguage(String primaryLanguage) {
 		this.primaryLanguage = primaryLanguage;
+	}
+
+	public FilmPricingStrategy getPricingStrategy() {
+		return pricingStrategy;
+	}
+
+	public void setPricingStrategy(FilmPricingStrategy pricingStrategy) {
+		this.pricingStrategy = pricingStrategy;
 	}
 
 	public List<FilmActor> getFilmActors() {

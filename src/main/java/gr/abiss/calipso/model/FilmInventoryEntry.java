@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,10 +35,9 @@ public class FilmInventoryEntry  extends AbstractAuditable<User> {
 	@JoinColumn(name = "film_id", nullable = false)
 	private Film film;
 
-	// bi-directional many-to-one association to Rental
-	@JsonIgnore
-	@OneToMany(mappedBy = "inventory")
-	private List<Rental> rentals;
+	@OneToOne
+	@JoinColumn(name="current_rental_id")
+	private Rental currentRental;
 
 	public FilmInventoryEntry() {
 		super();
@@ -56,12 +56,12 @@ public class FilmInventoryEntry  extends AbstractAuditable<User> {
 		this.film = film;
 	}
 
-	public List<Rental> getRentals() {
-		return rentals;
+	public Rental getCurrentRental() {
+		return currentRental;
 	}
 
-	public void setRentals(List<Rental> rentals) {
-		this.rentals = rentals;
+	public void setCurrentRental(Rental currentRental) {
+		this.currentRental = currentRental;
 	}
 
 }
