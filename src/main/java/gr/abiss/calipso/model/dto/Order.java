@@ -195,19 +195,22 @@ public class Order implements Serializable {
 			this.cost = this.pricingStrategy.getInitialPrice();
 			// if client requested more days than those included for free in initial rent price
 			if(this.days > this.pricingStrategy.getDaysFree()){
-				this.cost.add(
+				this.cost = this.cost.add(
 					this.pricingStrategy.getDailyPrice().multiply(
 						new BigDecimal(this.days - this.pricingStrategy.getDaysFree())));
 			}
 		}
-		// if return
+		// if returning rental
 		else{
-			// how many days have passed since rental?
+			// get days passed since rental
 			DateTime today = new DateTime();
 			int daysKept = Days.daysBetween(builder.currentRental.getCreatedDate(), today).getDays();
 			int daysPaid = builder.currentRental.getPayments().get(0).getDays();
+			
 			// calculate days late/pending payment
 			this.days = daysKept - daysPaid;
+			
+			// if late
 			if(this.days > 0){
 				this.cost = this.pricingStrategy.getDailyPrice().multiply(
 					new BigDecimal(this.days));

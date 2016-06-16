@@ -63,11 +63,19 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional(readOnly = false)
 	public Payments finalizeOrders(Orders orders) {
+		return this.finalizeOrders(orders, new User(SecurityUtil.getPrincipal().getId()));
+	}
+	
+	/**
+	 *  {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public Payments finalizeOrders(Orders orders, User staff) {
 		Payments payments = new Payments();
 		try{
 			// reusable info
 			Date now = new Date();
-			User staff = new User(SecurityUtil.getPrincipal().getId());
 			
 			// process order items 
 			for(Order givenOrder : orders.getItems()){

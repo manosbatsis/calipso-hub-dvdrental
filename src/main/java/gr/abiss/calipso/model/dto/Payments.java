@@ -10,6 +10,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import gr.abiss.calipso.model.Film;
@@ -25,6 +27,8 @@ import gr.abiss.calipso.model.enums.MpaaRating;
  */
 public class Payments implements Serializable {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(Payments.class);
+			
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -35,7 +39,7 @@ public class Payments implements Serializable {
 	/**
 	 * The total cost of enclosed payments
 	 */
-	private BigDecimal totalCost = BigDecimal.ZERO;
+	private BigDecimal totalCost = new BigDecimal(0);
 
 	/**
 	 * The customer performing the given payments
@@ -55,7 +59,8 @@ public class Payments implements Serializable {
 		if (this.items == null) {
 			this.items = new LinkedList<Payment>();
 		}
-		this.totalCost.add(payment.getAmount());
+		this.totalCost = this.totalCost.add(payment.getAmount());
+		LOGGER.info("Added amount: " + payment.getAmount() + ", raising the total cost to: " + this.totalCost);
 		return this.items.add(payment);
 	}
 

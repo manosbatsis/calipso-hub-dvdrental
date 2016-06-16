@@ -1,41 +1,32 @@
 package gr.abiss.calipso;
 
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.sql.DataSource;
+
+import org.flywaydb.core.Flyway;
+import org.resthub.common.util.PostInitialize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
 import gr.abiss.calipso.model.Film;
 import gr.abiss.calipso.model.FilmActor;
 import gr.abiss.calipso.model.FilmInventoryEntry;
 import gr.abiss.calipso.model.FilmPricingStrategy;
 import gr.abiss.calipso.model.Role;
 import gr.abiss.calipso.model.User;
+import gr.abiss.calipso.model.dto.Orders;
+import gr.abiss.calipso.model.dto.Payments;
 import gr.abiss.calipso.model.enums.MpaaRating;
+import gr.abiss.calipso.service.OrderService;
 import gr.abiss.calipso.service.RoleService;
 import gr.abiss.calipso.service.UserService;
 import gr.abiss.calipso.tiers.service.ModelService;
-import gr.abiss.calipso.utils.ConfigurationFactory;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.sql.DataSource;
-
-import org.apache.commons.configuration.Configuration;
-import org.flywaydb.core.Flyway;
-import org.resthub.common.util.PostInitialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 
@@ -68,6 +59,10 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 	@Inject
 	@Named("roleService")
 	private RoleService roleService;
+	
+	@Inject
+	@Named("orderService")
+	private OrderService orderService;
 
 	// service is created by calipso using using javassist at runtime so we use a generic definition
 	@Inject
@@ -103,6 +98,18 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 		// ---------------------------
 		Role staffRole = new Role("ROLE_STAFF", "Store Staff.");
 		staffRole = roleService.create(staffRole);
+		
+		// create a staff user
+
+		User staff = new User();
+		staff.setEmail("staff@abiss.gr");
+		staff.setFirstName("Staff");
+		staff.setLastName("User");
+		staff.setUsername("staff");
+		staff.setPassword("staff");
+		staff.setLastVisit(new Date());
+		staff.addRole(staffRole);
+		staff = userService.createActive(staff);
 
 		// prices
 		// ---------------------------
@@ -156,14 +163,35 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 			merylStreep
 		);
 		
-		// create data for integration tests
+		// TODO: move to unit/integration tests
 		// ---------------------------
 //		Matrix 11 (New release) 1 days 40 SEK
 //		Spider Man (Regular rental) 5 days 90 SEK
 //		Spider Man 2 (Regular rental) 2 days 30 SEK
 //		Out of Africa (Old film) 7 days 90 SEK
 //		Total price: 250 SEK
+
+		testRentFilm(matrix11, 1, new BigDecimal(40), staff);
+		testRentFilm(spiderMan, 5, new BigDecimal(90), staff);
+		testRentFilm(spiderMan2, 2, new BigDecimal(30), staff);
+		testRentFilm(outOfAfrica, 7, new BigDecimal(90), staff);
 		
+	}
+
+	private void testRentFilm(Film film, int days, BigDecimal expectedCost, User staff) {
+		// just get an inventory entry, they're all available at this point
+		FilmInventoryEntry inventoryEntry = film.getInventories().get(0);
+		
+		// create the order, using the staff user as a customer as well
+		Orders orders = new Orders(staff);
+		orders.addItem(this.orderService.buildOrder(inventoryEntry.getId(), days));
+		
+		// persist/finalize the order
+		Payments payments = this.orderService.finalizeOrders(orders, staff);
+		
+		LOGGER.info(film.getTitle() + ", cost for " + days + " days: " + payments.getItems().get(0).getAmount());
+		// test the payment amount
+		Assert.isTrue(expectedCost.compareTo(payments.getTotalCost()) == 0);
 	}
 
 	/**
@@ -182,9 +210,10 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 		film.setPricingStrategy(pricingStrategy);
 		film.setMpaaRating(mpaaRating);
 		film.addActor(keanuReeves);
-		film = filmService.create(film);
-		// create an inventory entry that corresponds to a physical copy
-		filmInventoryEntryService.create(new FilmInventoryEntry(film));
+		film = this.filmService.create(film);
+		// create inventory entries (i.e. rentable physical copies) for the given film
+		film.addInventory(filmInventoryEntryService.create(new FilmInventoryEntry(film)));
+		film.addInventory(filmInventoryEntryService.create(new FilmInventoryEntry(film)));
 		return film;
 	}
 

@@ -92,6 +92,13 @@ public class Film extends AbstractAuditable<User> {
 		}
 		return this.filmCategories.add(category);
 	}
+	
+	public boolean addInventory(FilmInventoryEntry inventoryEntry) {
+		if (this.getFilmCategories() == null) {
+			this.inventories = new LinkedList<FilmInventoryEntry>();
+		}
+		return this.inventories.add(inventoryEntry);
+	}
 
 	public Film(String title) {
 		super();

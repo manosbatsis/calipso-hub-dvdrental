@@ -43,6 +43,11 @@ public class Orders implements Serializable {
 	public Orders() {
 		super();
 	}
+	
+	public Orders(User customer) {
+		this();
+		this.customer = customer;
+	}
 
 	public boolean addItems(List<Order> orders) {
 		if (this.items == null) {
