@@ -56,17 +56,15 @@ Once ready, the staff can submit the set of orders for payment by submitting a P
 
 Method | URL
 -------|--------
-GET | http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?days
+POST | http://localhost:8080/calipso/api/rest/order/orders
 
-The Orders object has the following properties:
+The returning Payments JSON has the following properties:
 
 Name        | Type        | Description
 ------------|-------------|------------
-orders      | collection  | The enclosed orders to finalize
-totalCost   | float       | he total cost of enclosed orders
-customer    | user object (only id is required) | The customer performing the given orders
+items       | collection  | The persisted payments (one per inventory rental/return)
+totalCost   | float       | he total cost of enclosed payments
 
-The customer returning inventory items need not be the same as the one that rented them. This is useful in various household etc. scenarios.
 
 ## API Reference
 

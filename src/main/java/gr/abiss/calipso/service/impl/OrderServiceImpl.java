@@ -1,12 +1,26 @@
+/**
+ * Copyright (c) 2007 - 2013 Manos Batsis
+ *
+ * Calipso is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Calipso is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Calipso. If not, see http://www.gnu.org/licenses/agpl.html
+ */
 package gr.abiss.calipso.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import gr.abiss.calipso.model.FilmInventoryEntry;
@@ -18,10 +32,11 @@ import gr.abiss.calipso.model.dto.Orders;
 import gr.abiss.calipso.model.dto.Payments;
 import gr.abiss.calipso.service.OrderService;
 import gr.abiss.calipso.tiers.service.ModelService;
-import gr.abiss.calipso.userDetails.integration.LocalUser;
-import gr.abiss.calipso.userDetails.model.ICalipsoUserDetails;
 import gr.abiss.calipso.userDetails.util.SecurityUtil;
 
+/**
+ *  {@inheritDoc}
+ */
 @Named("orderService")
 @Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService {
@@ -65,7 +80,8 @@ public class OrderServiceImpl implements OrderService {
 	public Payments finalizeOrders(Orders orders) {
 		return this.finalizeOrders(orders, new User(SecurityUtil.getPrincipal().getId()));
 	}
-	
+
+
 	/**
 	 *  {@inheritDoc}
 	 */
@@ -74,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
 	public Payments finalizeOrders(Orders orders, User staff) {
 		Payments payments = new Payments();
 		try{
-			// reusable info
+			
 			Date now = new Date();
 			
 			// process order items 
@@ -114,6 +130,7 @@ public class OrderServiceImpl implements OrderService {
 					filmInventoryEntry.setCurrentRental(null);
 					this.filmInventoryEntryService.update(filmInventoryEntry);
 				}
+				
 				// create the corresponding payment
 				Payment payment = new Payment.Builder()
 						.amount(givenOrder.getCost())

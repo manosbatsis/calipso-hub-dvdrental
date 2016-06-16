@@ -2,25 +2,14 @@ package gr.abiss.calipso.model.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
-import gr.abiss.calipso.model.Film;
-import gr.abiss.calipso.model.FilmInventoryEntry;
-import gr.abiss.calipso.model.FilmPricingStrategy;
 import gr.abiss.calipso.model.Payment;
-import gr.abiss.calipso.model.Rental;
 import gr.abiss.calipso.model.User;
-import gr.abiss.calipso.model.enums.MpaaRating;
 
 /**
  * DTO used to return payments during rental/returns
@@ -60,7 +49,6 @@ public class Payments implements Serializable {
 			this.items = new LinkedList<Payment>();
 		}
 		this.totalCost = this.totalCost.add(payment.getAmount());
-		LOGGER.info("Added amount: " + payment.getAmount() + ", raising the total cost to: " + this.totalCost);
 		return this.items.add(payment);
 	}
 

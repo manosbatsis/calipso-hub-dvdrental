@@ -16,25 +16,55 @@
  */
 package gr.abiss.calipso.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import gr.abiss.calipso.model.base.AbstractCategory;
+import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
 
-
 /**
- * The persistent class for the film_category/genre.
- * 
+ * The persistent class for clients. Used to hang custom information like bonus points.
  */
 @Entity
-@Table(name="film_category")
-@ModelResource(path = "filmCategories")
-public class FilmCategory extends AbstractCategory<FilmCategory>{
-	
+@Table(name = "client")
+@ModelResource(path = "clients")
+public class Client extends AbstractAuditable<User> {
+
 	private static final long serialVersionUID = 1L;
 
-	public FilmCategory() {
+	@Column(name = "bonus_points", nullable = false)
+	private Integer bonusPoints = 0;
+
+	@OneToOne(optional = false)
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	public Client() {
+		super();
+	}
+
+	public Client(User user) {
+		this();
+		this.user = user;
+	}
+
+	public Integer getBonusPoints() {
+		return bonusPoints;
+	}
+
+	public void setBonusPoints(Integer bonusPoints) {
+		this.bonusPoints = bonusPoints;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }
