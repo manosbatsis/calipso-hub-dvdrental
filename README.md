@@ -38,7 +38,7 @@ The only manually created endpoint is that of [Orders](#orders)
 
 New rentals and returns are tested on startup by [code in application initializer](https://github.com/manosbatsis/calipso-hub-dvdrental/blob/master/src/main/java/gr/abiss/calipso/DvdRentalAppInitializer.java#L172) as shown bellow but this needs to be refactored to integration tests run in-conainer during  POM's integration profile (see also [#1](https://github.com/manosbatsis/calipso-hub-dvdrental/issues/1)).
 
-![console output of DvdRentalAppInitializer](etc/img/)
+![console output of DvdRentalAppInitializer](https://raw.githubusercontent.com/manosbatsis/calipso-hub-dvdrental/master/etc/img/appinit_tests.png)
 
 ## Build and Run
 
