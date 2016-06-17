@@ -117,7 +117,7 @@ totalCost   | float       | he total cost of enclosed payments
 
 ## API Reference
 
-The following sections document parts of the services API. The application exposes more endpoints for auth and SCRUD; those are "inherited" by the calipso-hub-webapp [WAR overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html).
+The following sections document parts of the services API (swagger and other relevant tools cannot handle generics/superclasses properly). The application exposes more endpoints for auth and SCRUD; those are "inherited" by the calipso-hub-webapp [WAR overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html).
 
 With the exception of [Orders](#orders),  endpoints are based on code tiers (Controller, Service, Repository) calipso generated using javassist during application initialization.
 
