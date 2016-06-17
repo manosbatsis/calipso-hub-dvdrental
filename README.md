@@ -1,4 +1,4 @@
-# calipso-hub-dvdrental
+# calipso-hub-dvdrental [![Build Status](https://travis-ci.org/manosbatsis/calipso-hub-dvdrental.svg?branch=master)](https://travis-ci.org/manosbatsis/calipso-hub-dvdrental)
 
 This project demonstrates how to use  [Calipso-Hub](https://github.com/abissgr/calipso-hub) to build a DVD Rental Store app with minimal effort.
 
