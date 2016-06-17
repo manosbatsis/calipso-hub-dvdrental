@@ -124,9 +124,9 @@ With the exception of [Orders](#orders),  endpoints are based on code tiers (Con
 Orders endpoints use DTOs and manually written code to provide the convenient API used in the [Sample Workflow](#sample_workflow).
 
 Action          | Method | URL | Request JSON body  | Response JSON body
-----------------|--------|-----|---------------|--
-Calculate order | GET    |  http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?days | none | Order DTO
-Finalize orders | POST |  http://localhost:8080/calipso/api/rest/order/orders | Orders DTO  | Payments DTO
+----------------|--------|-----|--------------------|--------------------
+Calculate order | GET    | http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?days | none | Order DTO
+Finalize orders | POST   | http://localhost:8080/calipso/api/rest/order/orders | Orders DTO  | Payments DTO
 
 ### DVD Inventory
 
