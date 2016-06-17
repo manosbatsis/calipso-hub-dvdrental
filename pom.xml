@@ -37,7 +37,7 @@
 				<jetty.jvmArgs>-Xms2048m -Xmx5120m -XX:MaxPermSize=512m
 					-XX:-UseParallelGC -Djava.awt.headless=true
 				</jetty.jvmArgs>
-				<requirejs.resources>${project.build.directory}/requirejs/build</requirejs.resources>
+                <requirejs.resources>${basedir}/target/requirejs-optimized</requirejs.resources>
 			</properties>
 			<build>
 				<plugins>
@@ -250,6 +250,12 @@
 		</dependency>
 
 	</dependencies>
+	
+    <properties>
+        <!-- use UTF-8 for everything -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
 	<build>
 		<filters>
 			<filter>${build.profile.filters}</filter>
