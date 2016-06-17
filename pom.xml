@@ -33,7 +33,7 @@
 
 			<properties>
 				<scriptmain>mainmin</scriptmain>
-				<build.profile.filters>production.properties</build.profile.filters>
+				<build.profile.filters>ci.properties</build.profile.filters>
 				<jetty.jvmArgs>-Xms2048m -Xmx5120m -XX:MaxPermSize=512m
 					-XX:-UseParallelGC -Djava.awt.headless=true
 				</jetty.jvmArgs>
