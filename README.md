@@ -44,7 +44,8 @@ New rentals and returns are tested on startup by [code in application initialize
 
 a) Clone the repository
 b) Copy HOWTO.txt to dev.properties
-c) mvn build install jetty:run
+c) mvn clean install jetty:run
+
 
 If you want to use the integration build profile to run tests or optimize client-side code you need to have [node](https://nodejs.org) installed.
 
@@ -81,6 +82,8 @@ GET | http://localhost:8080/calipso/api/rest/order/orders/:filmInventoryEntryId?
 
 The <code>days</code> can be used to control the cost for new rentals. The clients state the number of days they intent to rent the inventory entry for and the service calculates the cost according to the pricing strategy of the film. The days parameter is ignored for returns, in which case the current date is used to calculate any amount due for late returns.
 
+The returned Order JSON has the following properties.
+
 Name        | Type    | Description
 ------------|---------|------------
 inventoryId | string  | The UUID of the inventory entry
@@ -88,7 +91,7 @@ filmTitle   | string  | The film title
 filmMpaa    | string  | The film MPAA rating (unrated, G, PG, PG-13, R, NC-17)
 rentalId    | string  | The UUID of the current inventory rental or null if new (i.e. if the inventory entry is available)
 cost        | float   | The initial or pending cost for the inventory entry rental
-days        | int     | The number of days included in the cost
+days        | int     | The number of days included in the cost according to the clients intent.
 pricingStrategy | object | The pricinig strategy, see [Film Pricing Strategies](#film_pricing_strategies)
 
 Notes
