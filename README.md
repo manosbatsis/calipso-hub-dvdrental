@@ -42,9 +42,9 @@ New rentals and returns are tested on startup by [code in application initialize
 
 ## Build and Run
 
-a) Clone the repository
-b) Copy HOWTO.txt to dev.properties
-c) mvn clean install jetty:run
+- Clone the repository
+- Copy HOWTO.txt to dev.properties
+- mvn clean install jetty:run
 
 
 If you want to use the integration build profile to run tests or optimize client-side code you need to have [node](https://nodejs.org) installed.
