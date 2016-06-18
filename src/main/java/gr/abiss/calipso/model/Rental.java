@@ -29,6 +29,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;

@@ -65,17 +65,12 @@ public class Orders implements Serializable {
 		this.customer = customer;
 	}
 
-	public boolean addItems(List<Order> orders) {
-		if (this.items == null) {
-			this.items = new LinkedList<Order>();
-		}
-		return this.items.addAll(orders);
-	}
-
 	public boolean addItem(Order order) {
 		if (this.items == null) {
 			this.items = new LinkedList<Order>();
+			this.totalCost = new BigDecimal(0);
 		}
+		this.totalCost = this.totalCost.add(order.getCost());
 		return this.items.add(order);
 	}
 
@@ -103,4 +98,5 @@ public class Orders implements Serializable {
 		this.customer = customer;
 	}
 
+	
 }

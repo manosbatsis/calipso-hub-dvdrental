@@ -21,6 +21,8 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import gr.abiss.calipso.model.FilmInventoryEntry;
@@ -40,6 +42,8 @@ import gr.abiss.calipso.userDetails.util.SecurityUtil;
 @Named("orderService")
 @Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(OrderServiceImpl.class);
 	
 	private ModelService<FilmInventoryEntry, String> filmInventoryEntryService;
 
@@ -78,16 +82,6 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	@Transactional(readOnly = false)
 	public Payments finalizeOrders(Orders orders) {
-		return this.finalizeOrders(orders, new User(SecurityUtil.getPrincipal().getId()));
-	}
-
-
-	/**
-	 *  {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = false)
-	public Payments finalizeOrders(Orders orders, User staff) {
 		Payments payments = new Payments();
 		try{
 			
@@ -136,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
 						.amount(givenOrder.getCost())
 						.days(givenOrder.getDays())
 						.customer(orders.getCustomer())
-						.staff(staff)
+						.staff(new User(SecurityUtil.getPrincipal().getId()))
 						.rental(rental)
 						.build();
 				payment = this.paymentService.create(payment);

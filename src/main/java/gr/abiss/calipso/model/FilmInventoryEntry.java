@@ -23,6 +23,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Formula;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
 
@@ -36,7 +41,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
 public class FilmInventoryEntry  extends AbstractAuditable<User> {
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false)
+
+	@Formula(" current_rental_id IS NULL ")
 	private Boolean available = true;
 
 	// bi-directional many-to-one association to Film
@@ -44,6 +50,9 @@ public class FilmInventoryEntry  extends AbstractAuditable<User> {
 	@JoinColumn(name = "film_id", nullable = false)
 	private Film film;
 
+	
+	// ignore in break possible cyclic ref during serialization
+	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name="current_rental_id")
 	private Rental currentRental;

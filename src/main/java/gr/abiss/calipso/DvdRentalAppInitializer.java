@@ -127,6 +127,15 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 		staff.setLastVisit(new Date());
 		staff.addRole(staffRole);
 		staff = userService.createActive(staff);
+		
+		User client = new User();
+		client.setEmail("client@abiss.gr");
+		client.setFirstName("Client");
+		client.setLastName("User");
+		client.setUsername("client");
+		client.setPassword("client");
+		client.setLastVisit(new Date());
+		client = userService.createActive(client);
 
 		// prices
 		// ---------------------------
@@ -160,7 +169,7 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 		Film spiderMan = createFilm("Spider-Man",
 				"When bitten by a genetically modified spider, a nerdy, shy, and awkward high school student gains spider-like abilities that he eventually must use to fight evil as a superhero after tragedy befalls his family.",
 				regularFilms, MpaaRating.PG13, tobeyMaguire);
-		Film spiderMan2 = createFilm("Spider-Man",
+		Film spiderMan2 = createFilm("Spider-Man 2",
 				"Peter Parker is beset with troubles in his failing personal life as he battles a brilliant scientist named Doctor Otto Octavius.",
 				regularFilms, MpaaRating.PG13, tobeyMaguire);
 
@@ -168,112 +177,8 @@ public class DvdRentalAppInitializer extends gr.abiss.calipso.AppInitializer {
 				"In 20th-century colonial Kenya, a Danish baroness/plantation owner has a passionate love affair with a free-spirited big-game hunter.",
 				oldFilms, MpaaRating.PG, merylStreep);
 
-		// ==========================================
-		// TODO: refactor to unit/integration tests
-		// ==========================================
-		// Matrix 11 (New release) 1 days 40 SEK
-		// Spider Man (Regular rental) 5 days 90 SEK
-		// Spider Man 2 (Regular rental) 2 days 30 SEK
-		// Out of Africa (Old film) 7 days 90 SEK
-		// Total price: 250 SEK
-		BigDecimal totalCost = new BigDecimal(0);
-		LOGGER.info("");
-		LOGGER.info("---------------------------------");
-		LOGGER.info("Tests");
-		LOGGER.info("---------------------------------");
-		LOGGER.info("");
-		LOGGER.info("Examples of price calculations");
-		LOGGER.info("---------------------------------");
-		totalCost = totalCost.add(testRentFilm(matrix11, 1, new BigDecimal(40), staff));
-		totalCost = totalCost.add(testRentFilm(spiderMan, 5, new BigDecimal(90), staff));
-		totalCost = totalCost.add(testRentFilm(spiderMan2, 2, new BigDecimal(30), staff));
-		totalCost = totalCost.add(testRentFilm(outOfAfrica, 7, new BigDecimal(90), staff));
-		LOGGER.info("Total cost: " + totalCost);
-		// When returning films late
-		// Matrix 11 (New release) 2 extra days 80 SEK
-		// Spider Man (Regular rental) 1 days 30 SEK
-		totalCost = new BigDecimal(0);
-		LOGGER.info("");
-		LOGGER.info("When returning films late");
-		LOGGER.info("---------------------------------");
-		totalCost = totalCost.add(testReturnFilm(matrix11, 1, 2, new BigDecimal(80), staff));
-		totalCost = totalCost.add(testReturnFilm(spiderMan, 5, 1, new BigDecimal(30), staff));
-		LOGGER.info("Total cost: " + totalCost);
-		LOGGER.info("");
-		LOGGER.info("Total bonus points: " + this.clientRepository.getBonusPointsForUser(staff));
-		LOGGER.info("---------------------------------");
-		LOGGER.info("");
-
 	}
 
-	/**
-	 * Verify the rental cost is calculated properly
-	 * 
-	 * @param film
-	 * @param days
-	 * @param expectedCost
-	 * @param staff
-	 * @return the new rental cost
-	 */
-	// TODO: refactor to unit/integration tests
-	private BigDecimal testRentFilm(Film film, int days, BigDecimal expectedCost, User staff) {
-
-		// just get an inventory entry, they're all available at this point
-		FilmInventoryEntry inventoryEntry = film.getInventories().get(0);
-
-		// create the order, using the staff user as a customer as well
-		Orders orders = new Orders(staff);
-		orders.addItem(this.orderService.buildOrder(inventoryEntry.getId(), days));
-
-		// persist/finalize the order
-		Payments payments = this.orderService.finalizeOrders(orders, staff);
-
-		LOGGER.info(film.getTitle() + " (" + inventoryEntry.getFilm().getPricingStrategy().getName() + "), cost for "
-				+ days + " days: " + payments.getTotalCost());
-		// test the rental payment amount
-		Assert.isTrue(expectedCost.compareTo(payments.getTotalCost()) == 0);
-
-		return payments.getTotalCost();
-	}
-
-	/**
-	 * Verify the return cost is calculated properly
-	 * 
-	 * @param film
-	 * @param daysLate
-	 * @param expectedCost
-	 * @param staff
-	 * @return the late rental return cost
-	 */
-	// TODO: refactor to unit/integration tests
-	private BigDecimal testReturnFilm(Film film, int paidDays, int daysLate, BigDecimal expectedCost,
-			User staff) {
-
-		// get the rented inventory entry
-		FilmInventoryEntry inventoryEntry = this.filmInventoryEntryService.findById(film.getInventories().get(0).getId());
-
-		// calculate the appropriate late date
-		Calendar c = Calendar.getInstance();
-		// set calendar to rental date
-		c.setTime(inventoryEntry.getCurrentRental().getRentalDate());
-		// add the number of days paid in advance plus the additional late days
-		c.add(Calendar.DATE, paidDays + daysLate);
-
-		// create the order, using the staff user as a customer as well
-		Orders orders = new Orders(staff);
-		orders.addItem(this.orderService.buildOrder(inventoryEntry.getId(), daysLate));
-
-		// persist/finalize the order
-		Payments payments = this.orderService.finalizeOrders(orders, staff);
-
-		LOGGER.info(film.getTitle() + " (" + film.getPricingStrategy().getName()
-				+ "), cost for " + daysLate + " days late: " + payments.getTotalCost());
-		// test the late return payment amount
-		Assert.isTrue(expectedCost.compareTo(payments.getTotalCost()) == 0);
-		
-		return payments.getTotalCost();
-
-	}
 
 	/**
 	 * Create a film and an inventory entry

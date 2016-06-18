@@ -37,7 +37,7 @@
 				<jetty.jvmArgs>-Xms2048m -Xmx5120m -XX:MaxPermSize=512m
 					-XX:-UseParallelGC -Djava.awt.headless=true
 				</jetty.jvmArgs>
-                <requirejs.resources>${basedir}/target/requirejs-optimized</requirejs.resources>
+				<requirejs.resources>${basedir}/target/requirejs-optimized</requirejs.resources>
 			</properties>
 			<build>
 				<plugins>
@@ -96,76 +96,10 @@
 						</configuration>
 					</plugin>
 
-					<!-- 
-					Use the failsafe plugin along with Jetty for in-container integration testing 
-					=============================================================================
-					-->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.19.1</version>
-						<executions>
-							<execution>
-								<id>integration-test</id>
-								<goals>
-									<goal>integration-test</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>verify</id>
-								<goals>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.jetty</groupId>
-						<artifactId>jetty-maven-plugin</artifactId>
-						<version>9.2.7.v20150116</version>
-						<configuration>
-							<!-- We use non NIO connector in order to avoid read only static files 
-								under windows (don't ask) -->
-							<connectors>
-								<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-									<port>${jetty.port}</port>
-									<maxIdleTime>60000</maxIdleTime>
-									<requestBufferSize>30000</requestBufferSize>
-									<requestHeaderSize>30000</requestHeaderSize>
-								</connector>
-							</connectors>
-							<scanIntervalSeconds>10</scanIntervalSeconds>
-							<stopPort>8005</stopPort>
-							<stopKey>STOP</stopKey>
-						</configuration>
-						<executions>
-							<execution>
-								<id>start-jetty</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<!-- stop any previous instance to free up the port -->
-									<goal>stop</goal>
-									<goal>start</goal>
-								</goals>
-								<configuration>
-									<scanIntervalSeconds>0</scanIntervalSeconds>
-									<daemon>true</daemon>
-								</configuration>
-							</execution>
-							<execution>
-								<id>stop-jetty</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
+
 				</plugins>
 			</build>
-
 		</profile>
-
 		<profile>
 			<id>development</id>
 			<activation>
@@ -181,80 +115,10 @@
 			</properties>
 		</profile>
 	</profiles>
-
-	<dependencies>
-		<dependency>
-			<groupId>gr.abiss.calipso</groupId>
-			<artifactId>calipso-hub-webapp</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<!-- pom dependency to the overlay war must be declared to get transitive 
-			dependencies on the classpath -->
-		<dependency>
-			<groupId>gr.abiss.calipso</groupId>
-			<artifactId>calipso-hub-webapp</artifactId>
-			<version>${project.version}</version>
-			<type>pom</type>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- Testing dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<version>${spring-security.version}</version>
-		</dependency>
-		<!-- dependency> <groupId>org.assertj</groupId> <artifactId>assertj-core</artifactId> 
-			<version>3.4.1</version> </dependency> <dependency> <groupId>org.mockito</groupId> 
-			<artifactId>mockito-all</artifactId> <version>2.0.2-beta</version> </dependency> 
-			<dependency> <groupId>com.jayway.restassured</groupId> <artifactId>rest-assured</artifactId> 
-			<version>2.9.0</version> </dependency -->
-		<dependency>
-			<groupId>org.resthub</groupId>
-			<artifactId>resthub-test</artifactId>
-			<version>${resthub.spring.stack.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- rest-assured -->
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>3.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>spring-mock-mvc</artifactId>
-			<version>3.0.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20160212</version>
-		</dependency>
-
-	</dependencies>
-	
-    <properties>
-        <!-- use UTF-8 for everything -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	<properties>
+		<!-- use UTF-8 for everything -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<build>
 		<filters>
@@ -275,7 +139,6 @@
 			</testResource>
 		</testResources>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -396,10 +259,30 @@
 					</overlays>
 				</configuration>
 			</plugin>
+			<!-- Use the failsafe plugin along with Jetty for in-container integration 
+				testing -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.19.1</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>verify</id>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.2.7.v20150116</version>
 				<configuration>
 					<!-- We use non NIO connector in order to avoid read only static files 
 						under windows (don't ask) -->
@@ -415,10 +298,88 @@
 					<stopPort>8005</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
+				<executions>
+					<execution>
+						<id>start-jetty</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<!-- stop any previous instance to free up the port -->
+							<goal>stop</goal>
+							<goal>start</goal>
+						</goals>
+						<configuration>
+							<scanIntervalSeconds>0</scanIntervalSeconds>
+							<daemon>true</daemon>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-jetty</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
-
-
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>gr.abiss.calipso</groupId>
+			<artifactId>calipso-hub-webapp</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<!-- pom dependency to the overlay war must be declared to get transitive 
+			dependencies on the classpath -->
+		<dependency>
+			<groupId>gr.abiss.calipso</groupId>
+			<artifactId>calipso-hub-webapp</artifactId>
+			<version>${project.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Testing dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.resthub</groupId>
+			<artifactId>resthub-test</artifactId>
+			<version>${resthub.spring.stack.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- rest-assured -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>3.0.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20160212</version>
+		</dependency>
+
+	</dependencies>
 
 </project>

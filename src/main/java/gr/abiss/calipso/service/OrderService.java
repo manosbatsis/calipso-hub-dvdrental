@@ -42,12 +42,5 @@ public interface OrderService {
 	 */
 	Payments finalizeOrders(Orders orders);
 
-	/**
-	 * Finalize the given orders by persisting the appropriate rentals/payments
-	 * @param orders
-	 * @param staff
-	 * @return
-	 */
-	Payments finalizeOrders(Orders orders, User staff);
 
 }

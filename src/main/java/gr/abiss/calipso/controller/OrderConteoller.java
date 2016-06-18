@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,7 +73,7 @@ public class OrderConteoller {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public Payments finalizeOrders(Orders orders) {
+	public Payments finalizeOrders(@RequestBody Orders orders) {
 		return this.orderService.finalizeOrders(orders);
 	}
 	
