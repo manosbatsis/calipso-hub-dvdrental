@@ -7,6 +7,8 @@ downloadUrl: https://github.com/manosbatsis/calipso-hub-dvdrental
 # licence of the software
 license: GNU AGPLv3
 licenseUrl: https://opensource.org/licenses/AGPL-3.0
+# github base URL
+baseurl: "/calipso-hub-dvdrental"
 
 # list of additional links on the right of the top menu
 headerLinks:
