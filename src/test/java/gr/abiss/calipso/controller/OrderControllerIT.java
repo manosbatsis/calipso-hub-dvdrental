@@ -1,8 +1,8 @@
 package gr.abiss.calipso.controller;
 
-import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.notNullValue;
+import static io.restassured.RestAssured.*;
+import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 import java.math.BigDecimal;
 
@@ -11,10 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-
 import gr.abiss.calipso.model.Client;
 import gr.abiss.calipso.model.Film;
 import gr.abiss.calipso.model.FilmInventoryEntry;
@@ -22,30 +18,13 @@ import gr.abiss.calipso.model.User;
 import gr.abiss.calipso.model.dto.Order;
 import gr.abiss.calipso.model.dto.Orders;
 import gr.abiss.calipso.model.dto.Payments;
-import io.restassured.RestAssured;
-import io.restassured.config.ObjectMapperConfig;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
+import gr.abiss.calipso.test.AbstractControllerIT;
 
 @Test(singleThreaded = true, description = "Test orders and payments: cost calculation, validation and bonus points")
-public class OrderControllerIT {
+@SuppressWarnings("unused")
+public class OrderControllerIT extends AbstractControllerIT {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(OrderControllerIT.class);
-
-	private static final String JSON_UTF8 = "application/json; charset=UTF-8";
-	// configure the underlying Jackson object mapper as needed
-	static {
-		RestAssured.config = RestAssuredConfig.config().objectMapperConfig(
-				new ObjectMapperConfig().jackson2ObjectMapperFactory(new Jackson2ObjectMapperFactory() {
-					@Override
-					public ObjectMapper create(Class aClass, String s) {
-						ObjectMapper objectMapper = new ObjectMapper();
-						objectMapper.registerModule(new JodaModule());
-						objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-						return objectMapper;
-					}
-				}));
-	}
 
 	@Test(priority = 10, description = "Test new rentals")
 	public void testNewRentals() throws Exception {
@@ -53,7 +32,7 @@ public class OrderControllerIT {
 		// use a user as both staff and client
 		User staff = this.getUser("client");
 
-		// get film inentory entries, they are all available at this point
+		// get film inventory entries, they are all available at this point
 		FilmInventoryEntry matrix11 = this.getInventoryEntryByTitle("Matrix 11");
 		FilmInventoryEntry spiderMan = this.getInventoryEntryByTitle("Spider-Man");
 		FilmInventoryEntry spiderMan2 = this.getInventoryEntryByTitle("Spider-Man 2");

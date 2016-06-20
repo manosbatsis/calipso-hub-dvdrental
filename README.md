@@ -36,20 +36,57 @@ The only manually created endpoint is that of [Orders](#orders)
 
 #### Tests
 
-Integration tests are using the [maven-failsafe-plugin](http://maven.apache.org/surefire/maven-failsafe-plugin/) and [jetty-maven-plugin](http://www.eclipse.org/jetty/documentation/current/jetty-maven-plugin.html) to start and stop jetty during the <code>pre-integration-test</code> and <code>post-integration-test</code> phase respectively. The actual test code uses the [rest-assured](https://github.com/rest-assured/rest-assured) API to test HTTP requests/responses against the live container without using any mocks.
+The <code>ci</code> POM profile executes integration tests. It does so by utilising  [maven-failsafe-plugin](http://maven.apache.org/surefire/maven-failsafe-plugin/) and [jetty-maven-plugin](http://www.eclipse.org/jetty/documentation/current/jetty-maven-plugin.html) to start and stop jetty during the <code>pre-integration-test</code> and <code>post-integration-test</code> phases respectively. The actual test code is based on the [rest-assured](https://github.com/rest-assured/rest-assured) API and tests actual HTTP request/response scenarios against the live container without using any mocks.
 
 ![console output of OrderControllerIT](https://raw.githubusercontent.com/manosbatsis/calipso-hub-dvdrental/master/etc/img/appinit_tests.png)
 
 ## Build and Run
 
-Build:
+Follow the steps bellow to build.
 
-- Clone the repository
-- Copy HOWTO.txt to dev.properties
-- mvn clean install
-- mvn jetty:run
+a) Clone the repository:
 
-If you want to use the "ci" build profile to optimize client-side code you need to have [node](https://nodejs.org) installed.
+```bash
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+```
+
+b) Copy HOWTO.txt to dev.properties:
+
+```bash
+cp HOWTO.txt dev.properties
+```
+
+c) Build and install (-U is to force the download of updated snapshot dependencies)
+
+```bash
+mvn -U clean install
+```
+
+d) run embedded Jetty container:
+
+```bash
+mvn jetty:run
+```
+
+e) Browse the app [http://localhost:8080/calipso/client/](http://localhost:8080/calipso/client/)
+
+If you are using chrome, ensure you have enabled [cookies for localhost](http://www.alphadevx.com/a/454-Google-Chrome-and-localhost-cookies).
+
+
+If have [node](https://nodejs.org) installed, you can use the <code>optimize</code> profile and <code>jetty:run-war</code> to optimize client-side code:
+
+```bash
+mvn -P optimize clean jetty:run-war
+```
+
+To run integration tests simply activate the <code>ci</code> profile:
+
+
+```bash
+mvn -P ci clean install
+```
+
+See also [Tests](#tests).
 
 ## Sample Workflow
 

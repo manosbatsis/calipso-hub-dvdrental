@@ -24,23 +24,167 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<profiles>
-		<profile>
-			<id>integration</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 
+	<properties>
+		<jetty.jvmArgs>-XX:MaxPermSize=512m</jetty.jvmArgs>
+		<scriptmain>main</scriptmain>
+		<requirejs.resources>${project.build.directory}/requirejs/source</requirejs.resources>
+		<requirejs.optimized>${requirejs.resources}</requirejs.optimized>
+		<build.profile.filters>dev.properties</build.profile.filters>
+	</properties>
+	<profiles>
+
+		<profile>
+			<!-- ================================= -->
+			<!-- profile for integration testing -->
+			<!-- ================================= -->
+			<id>ci</id>
+			<build>
+				<plugins>
+					<!-- activate integration tests -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.19.1</version>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- start/stop the container during p re-integration-test/post-integration-test -->
+					<plugin>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-maven-plugin</artifactId>
+						<configuration>
+							<!-- We use non NIO connector in order to avoid read-only static files 
+								under windows (don't ask) -->
+							<connectors>
+								<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+									<port>${jetty.port}</port>
+									<maxIdleTime>60000</maxIdleTime>
+									<requestBufferSize>30000</requestBufferSize>
+									<requestHeaderSize>30000</requestHeaderSize>
+								</connector>
+							</connectors>
+							<scanIntervalSeconds>10</scanIntervalSeconds>
+							<stopPort>8005</stopPort>
+							<stopKey>STOP</stopKey>
+						</configuration>
+						<executions>
+							<execution>
+								<id>start-jetty</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<!-- stop any previous instance to free up the port -->
+									<goal>stop</goal>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<scanIntervalSeconds>0</scanIntervalSeconds>
+									<daemon>true</daemon>
+								</configuration>
+							</execution>
+							<execution>
+								<id>stop-jetty</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- =============================================== -->
+			<!-- profile for requirejs optimizer (js, CSS, hbs) -->
+			<!-- =============================================== -->
+			<id>optimize</id>
 			<properties>
-				<scriptmain>mainmin</scriptmain>
-				<build.profile.filters>ci.properties</build.profile.filters>
-				<jetty.jvmArgs>-Xms2048m -Xmx5120m -XX:MaxPermSize=512m
-					-XX:-UseParallelGC -Djava.awt.headless=true
-				</jetty.jvmArgs>
-				<requirejs.resources>${basedir}/target/requirejs-optimized</requirejs.resources>
+				<requirejs.optimized>${project.build.directory}/requirejs/optimized</requirejs.optimized>
 			</properties>
 			<build>
 				<plugins>
+
+					<!-- Step 1: get the overlay resources first (js, CSS and handlebars) -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.10</version>
+						<executions>
+							<execution>
+								<id>unpack</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>gr.abiss.calipso</groupId>
+											<artifactId>calipso-hub-webapp</artifactId>
+											<version>${project.version}</version>
+											<type>war</type>
+											<overWrite>false</overWrite>
+											<includes>js/**/*,css/**/*,template/**/*</includes>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${requirejs.resources}</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Step 2: add this project's files on top of the overlay's -->
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.7</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<!-- here the phase you need -->
+								<phase>process-sources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<overwrite>true</overwrite>
+									<encoding>UTF-8</encoding>
+									<outputDirectory>${requirejs.resources}</outputDirectory>
+									<resources>
+										<resource>
+											<directory>src/main/webapp/js</directory>
+											<targetPath>js</targetPath>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>src/main/webapp/css</directory>
+											<targetPath>css</targetPath>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>src/main/webapp/template</directory>
+											<targetPath>template</targetPath>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Step 3: optimize -->
 					<plugin>
 						<groupId>com.github.bringking</groupId>
 						<artifactId>requirejs-maven-plugin</artifactId>
@@ -56,7 +200,7 @@
 								<configuration>
 									<!-- path to optimizer json config file(s) -->
 									<configFile>
-										${project.build.directory}/requirejs/source/js/build/build-config.js
+										${requirejs.resources}/js/build/build-config.js
 									</configFile>
 								</configuration>
 							</execution>
@@ -70,7 +214,7 @@
 								<configuration>
 									<!-- path to optimizer json config file(s) -->
 									<configFile>
-										${project.build.directory}/requirejs/source/js/build/build-css-config.js
+										${requirejs.resources}/js/build/build-css-config.js
 									</configFile>
 								</configuration>
 							</execution>
@@ -78,7 +222,7 @@
 						<configuration>
 							<!-- optional path to optimizer executable -->
 							<optimizerFile>
-								${basedir}/src/main/webapp/js/build/r.js
+								${requirejs.resources}/js/build/r.js
 							</optimizerFile>
 							<optimizerParameters>
 								<parameter>optimize=uglify</parameter>
@@ -96,30 +240,37 @@
 						</configuration>
 					</plugin>
 
+					<!-- Step 4: configure the WAR plugin properly -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<webResources>
+								<resource>
+									<directory>${requirejs.optimized}</directory>
+								</resource>
+							</webResources>
+							<!-- 
+							Overlays are applied with a first-win strategy 
+							(hence if a file has been copied by one overlay, it won't be copied by another). 
+							-->
+							<overlays>
+								<overlay>
+									<groupId>gr.abiss.calipso</groupId>
+									<artifactId>calipso-hub-webapp</artifactId>
+									<excludes>
+										<exclude>WEB-INF/lib/*.jar</exclude>
+									</excludes>
+								</overlay>
+							</overlays>
+						</configuration>
+					</plugin>
 
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>development</id>
-			<activation>
-				<file>
-					<exists>${basedir}/dev.properties</exists>
-				</file>
-			</activation>
-			<properties>
-				<jetty.jvmArgs>-XX:MaxPermSize=512m</jetty.jvmArgs>
-				<scriptmain>main</scriptmain>
-				<requirejs.resources>${project.build.directory}/requirejs/source</requirejs.resources>
-				<build.profile.filters>dev.properties</build.profile.filters>
-			</properties>
-		</profile>
 	</profiles>
-	<properties>
-		<!-- use UTF-8 for everything -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	</properties>
 	<build>
 		<filters>
 			<filter>${build.profile.filters}</filter>
@@ -141,81 +292,6 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19.1</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.surefire</groupId>
-						<artifactId>surefire-junit47</artifactId>
-						<version>2.19.1</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-				<executions>
-					<execution>
-						<id>unpack</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>gr.abiss.calipso</groupId>
-									<artifactId>calipso-hub-webapp</artifactId>
-									<version>${project.version}</version>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<includes>js/**/*,css/**/*,template/**/*</includes>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/requirejs/source</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<!-- here the phase you need -->
-						<phase>process-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<overwrite>true</overwrite>
-							<encoding>UTF-8</encoding>
-							<outputDirectory>${project.build.directory}/requirejs/source</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/main/webapp/js</directory>
-									<targetPath>js</targetPath>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>src/main/webapp/css</directory>
-									<targetPath>css</targetPath>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>src/main/webapp/template</directory>
-									<targetPath>template</targetPath>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
@@ -225,60 +301,21 @@
 					<target>${java-version}</target>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
-					<webResources>
-						<resource>
-							<directory>${requirejs.resources}</directory>
-						</resource>
-						<resource>
-							<directory>src/main/webapp</directory>
-							<includes>
-								<include>**/*.jsp</include>
-							</includes>
-							<!-- enable filtering -->
-							<filtering>true</filtering>
-						</resource>
-					</webResources>
 					<overlays>
 						<overlay>
 							<groupId>gr.abiss.calipso</groupId>
 							<artifactId>calipso-hub-webapp</artifactId>
-
 							<excludes>
-								<exclude>css</exclude>
 								<exclude>**/*.jar</exclude>
-								<exclude>js</exclude>
-								<exclude>template</exclude>
 							</excludes>
 						</overlay>
 					</overlays>
 				</configuration>
-			</plugin>
-			<!-- Use the failsafe plugin along with Jetty for in-container integration 
-				testing -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.19.1</version>
-				<executions>
-					<execution>
-						<id>integration-test</id>
-						<goals>
-							<goal>integration-test</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>verify</id>
-						<goals>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
@@ -298,28 +335,6 @@
 					<stopPort>8005</stopPort>
 					<stopKey>STOP</stopKey>
 				</configuration>
-				<executions>
-					<execution>
-						<id>start-jetty</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<!-- stop any previous instance to free up the port -->
-							<goal>stop</goal>
-							<goal>start</goal>
-						</goals>
-						<configuration>
-							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<daemon>true</daemon>
-						</configuration>
-					</execution>
-					<execution>
-						<id>stop-jetty</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -344,42 +359,11 @@
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- Testing dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<version>${spring-security.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.resthub</groupId>
-			<artifactId>resthub-test</artifactId>
-			<version>${resthub.spring.stack.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- rest-assured -->
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>3.0.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20160212</version>
-		</dependency>
 
+		<dependency>
+			<groupId>gr.abiss.calipso</groupId>
+			<artifactId>calipso-hub-test</artifactId>
+		</dependency>
 	</dependencies>
 
 </project>
