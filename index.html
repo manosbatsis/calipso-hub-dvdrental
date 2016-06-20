@@ -1,90 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+---
+layout: default
+title: Home
+description: Simple documentation template for Github pages
+isHome: true
+---
 
-  <title>Jekyll Bootstrap Doc</title>
-
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
-  <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/assets/css/docs.min.css" rel="stylesheet">
-  <link href="/assets/css/style.css" rel="stylesheet">
-
-  <style>
-    #content {
-      background:#080331;
-      background:linear-gradient(135deg, #080331, #673051);
-    }
-  </style>
-
-  <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
-  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.3.0/bootbox.min.js"></script>
-  <script src="/assets/js/docs.min.js"></script>
-</head>
-
-<body>
-  <!-- Main navigation
-  =========================================== -->
-  <header class="navbar navbar-static-top bs-docs-nav" id="top">
-    <div class="container">
-      <div class="navbar-header" role="banner">
-        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/index.html">Jekyll Bootstrap Doc</a>
-      </div>
-      <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-        <ul class="nav navbar-nav">
-        
-        
-          
-        
-          
-        
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-        
-          <li>
-            <a href="https://github.com/mistic100/jekyll-bootstrap-doc">GitHub</a>
-          </li>
-        
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-
-  <!-- Header
-  =========================================== -->
-  
-  <div class="bs-docs-masthead" id="content">
-    <div class="container">
-      <h1 class="home-title">Jekyll Bootstrap Doc</h1>
-      <p class="lead">Simple documentation template for Github pages</p>
-      <p class="lead">
-        <a href="https://github.com/mistic100/jekyll-bootstrap-doc" class="btn btn-outline-inverse btn-lg">Download</a>
-      </p>
-      <p class="version">Currently v1.1.0</p>
-    </div>
-  </div>
-
-  
-
-  <div class="container bs-docs-container">
-    <div class="row">
-      <!-- Content
-      =========================================== -->
-      <div class="col-md-9" role="main">
-        <section class="bs-docs-section">
+<section class="bs-docs-section">
   <h1 id="overview" class="page-header">Overview</h1>
   
   <blockquote>
@@ -120,11 +41,13 @@
   <h2 id="install-jekyll">Install Jekyll</h2>
   <p>Follow the <a href="https://help.github.com/articles/using-jekyll-with-pages">GitHub guide</a> to install Jekyll on your computer. The big steps are:</p>
 
-<figure class="highlight"><pre><code class="language-text" data-lang="text">apt-get install ruby ruby-dev
+{% highlight text %}
+apt-get install ruby ruby-dev
 gem install bundler
 git clone git://github.com/mistic100/jekyll-bootstrap-doc
 bundle install
-bundle exec jekyll serve</code></pre></figure>
+bundle exec jekyll serve
+{% endhighlight %}
 
   <h2 id="configuration">Configuration</h2>
   <p>Adapt the <code>_config.yml</code> file to your project.</p>
@@ -228,68 +151,82 @@ bundle exec jekyll serve</code></pre></figure>
   <h2 id="pages">Pages</h2>
   <p>The main page is the <code>index.html</code> file. You can also add additional pages by creating <code>.html</code> files in the root folder or in any sub-folder. Each page file must begins with a template declaration:</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html">---
+{% highlight html %}
+---
 layout: default
 title: Home
 description: Simple documentation template for Github pages
 ---
 
-<span class="c">&lt;!-- content --&gt;</span></code></pre></figure>
+<!-- content -->
+{% endhighlight %}
 
   <p>Set <code>isHome</code> to <code>true</code> on the main page file, the homepage will have a bigger header with a central download button.</p>
   
-<figure class="highlight"><pre><code class="language-html" data-lang="html">---
+{% highlight html %}
+---
 ..........
 isHome: true
----</code></pre></figure>
+---
+{% endhighlight %}
 
   <p>Set <code>hide</code> to <code>true</code> to hide a page from the main menu, the page will still be accessible with direct link. <a href="hidden.html">Example</a>.</p>
   
-<figure class="highlight"><pre><code class="language-html" data-lang="html">---
+{% highlight html %}
+---
 ..........
 hide: true
----</code></pre></figure>
+---
+{% endhighlight %}
 
   <h2 id="titles">Titles</h2>
   <p>In order to get the right menu automatically generated you must respect some conventions.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="c">&lt;!-- wrap each main section with "bs-docs-section" class --&gt;</span>
-<span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">"bs-docs-section"</span><span class="nt">&gt;</span>
-  <span class="c">&lt;!-- each section must contain ONE h1 with an id and optionally a "page-header" class --&gt;</span>
-  <span class="nt">&lt;h1</span> <span class="na">id=</span><span class="s">"first-level"</span> <span class="na">class=</span><span class="s">"page-header"</span><span class="nt">&gt;</span>First level<span class="nt">&lt;/h1&gt;</span>
+{% highlight html %}
+<!-- wrap each main section with "bs-docs-section" class -->
+<section class="bs-docs-section">
+  <!-- each section must contain ONE h1 with an id and optionally a "page-header" class -->
+  <h1 id="first-level" class="page-header">First level</h1>
 
-  <span class="c">&lt;!-- you can optionally declare sub-sections with h2/h3 with an id --&gt;</span>
-  <span class="nt">&lt;h2</span> <span class="na">id=</span><span class="s">"sub-section"</span><span class="nt">&gt;</span>Second level<span class="nt">&lt;/h2&gt;</span>
+  <!-- you can optionally declare sub-sections with h2/h3 with an id -->
+  <h2 id="sub-section">Second level</h2>
 
-  <span class="nt">&lt;h3</span> <span class="na">id=</span><span class="s">"another-sub-section"</span><span class="nt">&gt;</span>Still second level<span class="nt">&lt;/h3&gt;</span>
-<span class="nt">&lt;/section&gt;</span></code></pre></figure>
-
-  <h2 id="highlight">Syntax highlight</h2>
-  <p>The powerful Pygments highlighter is activated on the template, just wrap your unescaped source code with the <code>{% highlight ... %}</code> directive.</p>
-
-<figure class="highlight"><pre><code class="language-text" data-lang="text">{% highlight html %}
-&lt;div&gt;Some &lt;b&gt;HTML&lt;/b&gt;&lt;/div&gt;
+  <h3 id="another-sub-section">Still second level</h3>
+</section>
 {% endhighlight %}
 
-{% highlight javascript %}
+  <h2 id="highlight">Syntax highlight</h2>
+  <p>The powerful Pygments highlighter is activated on the template, just wrap your unescaped source code with the <code>{{ "{% highlight ... " }}%}</code> directive.</p>
+
+{% highlight text %}
+{{ "{% highlight html " }}%}
+<div>Some <b>HTML</b></div>
+{{ "{% endhighlight " }}%}
+
+{{ "{% highlight javascript " }}%}
 alert('Some javascript');
-{% endhighlight %}</code></pre></figure>
+{{ "{% endhighlight " }}%}
+{% endhighlight %}
 
   <h2 id="resources">Resources &amp; links</h2>
-  <p>If you need to create internal links between your pages, or include resources (JS &amp; CSS), always start your URLs with <code>{{site.github.url}}</code>.</p>
+  <p>If you need to create internal links between your pages, or include resources (JS &amp; CSS), always start your URLs with <code>{{ "{{site.github.url" }}}}</code>.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"{{site.github.url}}/dist/my-script.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+{% highlight html %}
+<script src="{{ "{{site.github.url" }}}}/dist/my-script.js"></script>
 
-<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{{site.github.url}}/about/index.html"</span><span class="nt">&gt;</span>About<span class="nt">&lt;/a&gt;</span></code></pre></figure>
+<a href="{{ "{{site.github.url" }}}}/about/index.html">About</a>
+{% endhighlight %}
 
   <h2 id="bootbox">Bootbox</h2>
   <p><a href="http://bootboxjs.com/">Bootbox</a> is installed with a syntax sugar to easily create pop-in content. To use this sugar you must create a clickable element with a <code>data-bootbox</code> attribute and an hidden content holder with a corresponding <code>id</code> attribute.</p>
 
-<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;button</span> <span class="na">class=</span><span class="s">"btn btn-primary btn-xs"</span> <span class="na">data-bootbox=</span><span class="s">"my-content"</span><span class="nt">&gt;</span>Button title<span class="nt">&lt;/button&gt;</span>
+{% highlight html %}
+<button class="btn btn-primary btn-xs" data-bootbox="my-content">Button title</button>
 
-<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"my-content"</span> <span class="na">class=</span><span class="s">"hidden"</span> <span class="na">title=</span><span class="s">"Pop-in title"</span><span class="nt">&gt;</span>
+<div id="my-content" class="hidden" title="Pop-in title">
   Pop-in content
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+</div>
+{% endhighlight %}
 
   <h2 id="gems">Plugins</h2>
   <p>All available Jekyll plugins are installed by default, you can remove them by modifying the <code>gems</code> parameter in <code>_config.yml</code>. See the documentation on <a href="https://help.github.com/articles/using-jekyll-plugins-with-github-pages/">GitHub Help</a> pages.</p>
@@ -297,107 +234,3 @@ alert('Some javascript');
   <h2 id="bower">Bower</h2>
   <p>Fell free to use the <code>bower.json</code> to manage your front dependencies. Bower packages are added the <code>dist</code> directory and <b>MUST</b> be pushed to the repository. jQuery and Bootstrap are ignored by <code>.gitignore</code> as already loaded from a CDN.</p>
 </section>
-      </div>
-
-      <!-- Page navigation
-      =========================================== -->
-      <div class="col-md-3" role="complementary">
-        <div class="bs-docs-sidebar hidden-print">
-          <ul class="nav bs-docs-sidenav">
-          </ul>
-          <a class="back-to-top" href="#top">
-            <i class="glyphicon glyphicon-chevron-up"></i> Back to top
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Footer
-  =========================================== -->
-  <footer class="bs-docs-footer" role="contentinfo">
-    <div class="container">
-      <div class="bs-docs-social">
-        <ul class="bs-docs-social-buttons">
-        
-          <li>
-            <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=mistic100&amp;repo=jekyll-bootstrap-doc&amp;type=watch&amp;count=true" width="90" height="20" title="Star on GitHub"></iframe>
-          </li>
-          <li>
-            <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=mistic100&amp;repo=jekyll-bootstrap-doc&amp;type=fork&amp;count=true" width="90" height="20" title="Fork on GitHub"></iframe>
-          </li>
-        
-        
-          <li>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="" data-count="horizontal" data-via="" data-text="Jekyll Bootstrap Doc" data-hashtags="">Tweet</a>
-          </li>
-        
-        
-        
-          <li>
-            <div class="fb-like" data-href="" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
-          </li>
-        
-        
-        </ul>
-      </div>
-
-      <p>
-        Licensed under <a href="http://opensource.org/licenses/MIT" target="_blank">MIT License</a>,
-        documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
-      </p>
-      <p>
-        Documentation template by <a href="http://getbootstrap.com">Bootstrap team</a>,
-        generated with <a href="https://github.com/mistic100/jekyll-bootstrap-doc">Jekyll Bootstrap Doc</a>
-      </p>
-
-      <ul class="bs-docs-footer-links muted">
-        <li>Currently v1.1.0</li>
-      
-        <li>&middot;</li>
-        <li><a href="https://github.com/mistic100/jekyll-bootstrap-doc">GitHub</a></li>
-      
-        <li>&middot;</li>
-        <li><a href="https://github.com/mistic100/jekyll-bootstrap-doc/issues?state=open">Issues</a></li>
-      
-      </ul>
-    </div>
-  </footer>
-
-
-  <!-- Async scripts
-  =========================================== -->
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/0.1.2/trianglify.min.js"></script>
-  <script>trianglify('#080331', '#673051');</script>
-  
-
-  
-  <script>
-    window.twttr = (function (d,s,id) {
-      var t, js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return; js=d.createElement(s); js.id=id; js.async=1;
-      js.src="https://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
-      return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
-    }(document, "script", "twitter-wjs"));
-  </script>
-  
-
-  
-  <div id="fb-root"></div>
-  <script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  </script>
-  
-
-  
-
-</body>
-</html>
