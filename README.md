@@ -47,7 +47,7 @@ Follow the steps bellow to build.
 a) Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+git clone https://github.com/manosbatsis/calipso-hub-dvdrental.git
 ```
 
 b) Copy HOWTO.txt to dev.properties:
@@ -56,7 +56,7 @@ b) Copy HOWTO.txt to dev.properties:
 cp HOWTO.txt dev.properties
 ```
 
-c) Build and install (-U is to force the download of updated snapshot dependencies)
+c) Build and install (<code>-U</code> forces the download of updated snapshot dependencies)
 
 ```bash
 mvn -U clean install
