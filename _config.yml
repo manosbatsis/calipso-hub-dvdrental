@@ -1,24 +1,24 @@
 # name of the software
-name: Jekyll Bootstrap Doc
+name: "Calipso Hub: DVD Rental"
 # current version of the software
-version: 1.1.0
+version: 2.0-SNAPSHOT
 # url of the download button
-downloadUrl: https://github.com/mistic100/jekyll-bootstrap-doc
+downloadUrl: https://github.com/manosbatsis/calipso-hub-dvdrental
 # licence of the software
-license: MIT License
-licenseUrl: http://opensource.org/licenses/MIT
+license: GNU AGPLv3
+licenseUrl: https://opensource.org/licenses/AGPL-3.0
 
 # list of additional links on the right of the top menu
 headerLinks:
   - title: GitHub
-    url: https://github.com/mistic100/jekyll-bootstrap-doc
+    url: https://github.com/manosbatsis/calipso-hub-dvdrental
 
 # list if additional links on the footer
 footerLinks:
   - title: GitHub
-    url: https://github.com/mistic100/jekyll-bootstrap-doc
+    url: https://github.com/manosbatsis/calipso-hub-dvdrental
   - title: Issues
-    url: https://github.com/mistic100/jekyll-bootstrap-doc/issues?state=open
+    url: https://github.com/manosbatsis/calipso-hub-dvdrental/issues?state=open
 
 # header
 header:
@@ -33,19 +33,19 @@ analytics:
 
 # github buttons
 githubButton:
-  user: mistic100
-  repo: jekyll-bootstrap-doc
+  user: manosbatsis
+  repo: calipso-hub-dvdrental
 
 # twitter buttons
 twitter:
-  enabled: true
+  enabled: false
   via:
   hash:
   account:
 
 # facebook buttons
 facebook:
-  enabled: true
+  enabled: false
   profileUrl:
 
 
