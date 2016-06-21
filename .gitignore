@@ -1,6 +1,6 @@
-.project
-.classpath
-.settings
-_site/
-.sass-cache/
-.jekyll-metadata
+/.project
+/.classpath
+/.settings
+/_site/
+/.sass-cache/
+/.jekyll-metadata
