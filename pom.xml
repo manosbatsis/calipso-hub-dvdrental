@@ -363,6 +363,7 @@
 		<dependency>
 			<groupId>gr.abiss.calipso</groupId>
 			<artifactId>calipso-hub-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
