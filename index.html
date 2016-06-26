@@ -235,9 +235,18 @@ isHome: true
 
 
 <section class="bs-docs-section">
-	<h1 id="api-reference" class="page-header">API Reference</h1>
+	<h1 id="api-reference" class="page-header">Swagger API Reference</h1>
 	<p>
-		The following sections document parts of the services API (swagger and other relevant tools cannot handle generics/superclasses properly). The application exposes more endpoints for auth and SCRUD;
+		The webapp provides automatically-generated API documentation based on 
+		[Swagger](http://swagger.io/) and created by [Springfox](http://springfox.github.io/springfox/). To access 
+		the documentation run the app and point your browser to [http://localhost:8080/calipso/apidoc](http://localhost:8080/calipso/apidoc).
+	</p>
+	<img src="{{ site.baseurl }}/assets/images/swagger-ui.png" class="img-responsive" alt="Responsive image">
+</section>
+<section class="bs-docs-section">
+	<h1 id="api-subset-reference" class="page-header">API Overview</h1>
+	<p>
+		In addition to the [reference documentation](#api-reference) described just above, the following sections document a subset of the services API (swagger and other relevant tools cannot handle generics/superclasses properly). The application exposes more endpoints for auth and SCRUD;
 		those are "inherited" by the calipso-hub-webapp <a href="http://maven.apache.org/plugins/maven-war-plugin/overlays.html">WAR overlay</a>.
 	</p>
 	<p>
