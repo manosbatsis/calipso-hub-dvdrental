@@ -16,6 +16,7 @@
 #
 # CONFIG PROPERTIES
 # ----------------------------------------------
+build.calipso.appName=Calipso DVD Rental
 # Note: Google Chrome does not save cookies from localhost
 build.calipso.baseurl=http://localhost:8080/calipso
 build.calipso.initData=true
@@ -26,6 +27,7 @@ build.calipso.cookies.secure=false
 build.log.rootlevel=warn
 
 # Email
+build.mail.enabled=false
 build.mail.server.host=MAIL.YOU.COM
 build.mail.server.port=2525
 build.mail.server.protocol=smtp
