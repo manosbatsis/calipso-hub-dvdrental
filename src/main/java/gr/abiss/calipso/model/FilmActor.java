@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import gr.abiss.calipso.model.User;
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 
 /**
@@ -30,7 +31,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
  */
 @Entity
 @Table(name="film_actor")
-@ModelResource(path = "filmActors")
+@ModelResource(path = "filmActors", apiName = "Film actors", apiDescription = "Operations about film actors")
+@ApiModel(value = "Film Actor", description = "A model representing a film actor")
 public class FilmActor extends AbstractAuditable<User> {
 	private static final long serialVersionUID = 1L;
 

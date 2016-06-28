@@ -39,13 +39,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.model.enums.MpaaRating;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 /**
  * The persistent class for films
  */
 @Entity
 @Table(name = "film")
-@ModelResource(path = "films")
+@ModelResource(path = "films", apiName = "Films", apiDescription = "Operations about films")
+@ApiModel(value = "Film", description = "A model representing a film")
 public class Film extends AbstractAuditable<User> {
 	private static final long serialVersionUID = 1L;
 

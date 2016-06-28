@@ -23,6 +23,7 @@ import javax.persistence.Table;
 
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>Entity that persists a pricing strategy. Includes an implementation of the builder pattern.</p>
@@ -56,7 +57,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
  */
 @Entity
 @Table(name = "film_pricing_strategy")
-@ModelResource(path = "filmPricingStrategies")
+@ModelResource(path = "filmPricingStrategies", apiName = "Film pricing strategy", apiDescription = "Operations about film pricing strategies")
+@ApiModel(value = "Film Pricing Strategy", description = "A model representing a film pricing strategy")
 public class FilmPricingStrategy extends AbstractAuditable<User> {
 
 	private static final long serialVersionUID = 1L;

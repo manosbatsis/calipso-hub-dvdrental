@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 /**
  * The persistent class for the rental database table.
@@ -40,7 +41,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
  */
 @Entity
 @Table(name = "rental")
-@ModelResource(path = "rentals")
+@ModelResource(path = "rentals", apiName = "Rentals", apiDescription = "Operations about rentals")
+@ApiModel(value = "Rental", description = "A model representing a rental")
 public class Rental extends AbstractAuditable<User> {
 	private static final long serialVersionUID = 1L;
 

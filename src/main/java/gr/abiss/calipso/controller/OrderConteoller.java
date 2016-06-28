@@ -34,11 +34,14 @@ import gr.abiss.calipso.model.dto.Order;
 import gr.abiss.calipso.model.dto.Orders;
 import gr.abiss.calipso.model.dto.Payments;
 import gr.abiss.calipso.service.OrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Provides "facade" endpoints for building and persisting rental/return orders 
  */
 @Controller
+@Api(tags = "Orders", description = "Operations about orders")
 @RequestMapping(value = "/api/rest/orders", produces = { "application/json", "application/xml" })
 public class OrderConteoller {
 
@@ -58,6 +61,7 @@ public class OrderConteoller {
 	 * @param days the number of days intended to rent (request parameter)
 	 * @return an order with calculated cost
 	 */
+    @ApiOperation(value = "Build order")
 	@RequestMapping(value = "{filmInventoryEntryId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Order buildOrder(@PathVariable String filmInventoryEntryId,
@@ -71,6 +75,7 @@ public class OrderConteoller {
 	 * @param orders
 	 * @return
 	 */
+    @ApiOperation(value = "Finilize orders")
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public Payments finalizeOrders(@RequestBody Orders orders) {

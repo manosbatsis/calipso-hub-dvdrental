@@ -24,13 +24,15 @@ import javax.persistence.Table;
 
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 /**
  * The persistent class for clients. Used to hang custom information like bonus points.
  */
 @Entity
 @Table(name = "client")
-@ModelResource(path = "clients")
+@ModelResource(path = "clients", apiName = "Clients", apiDescription = "Operations about clients")
+@ApiModel(value = "Client", description = "A model representing a store client")
 public class Client extends AbstractAuditable<User> {
 
 	private static final long serialVersionUID = 1L;

@@ -25,6 +25,7 @@ import javax.persistence.Table;
 
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 /**
  * The persistent class for the payment database table.
@@ -32,7 +33,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
  */
 @Entity
 @Table(name = "payment")
-@ModelResource(path = "payments")
+@ModelResource(path = "payments", apiName = "Payments", apiDescription = "Operations about payments")
+@ApiModel(value = "Payment", description = "A model representing a payment")
 public class Payment extends AbstractAuditable<User> {
 
 	private static final long serialVersionUID = 1L;

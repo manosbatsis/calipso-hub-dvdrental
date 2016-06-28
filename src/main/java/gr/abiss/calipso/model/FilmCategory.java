@@ -21,6 +21,7 @@ import javax.persistence.Table;
 
 import gr.abiss.calipso.model.base.AbstractCategory;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 
 /**
@@ -29,7 +30,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
  */
 @Entity
 @Table(name="film_category")
-@ModelResource(path = "filmCategories")
+@ModelResource(path = "filmCategories", apiName = "Film categories", apiDescription = "Operations about film categories")
+@ApiModel(value = "Film Category", description = "A model representing a film category")
 public class FilmCategory extends AbstractCategory<FilmCategory>{
 	
 	private static final long serialVersionUID = 1L;

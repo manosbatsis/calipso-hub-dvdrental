@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import gr.abiss.calipso.model.entities.AbstractAuditable;
 import gr.abiss.calipso.tiers.annotation.ModelResource;
+import io.swagger.annotations.ApiModel;
 
 /**
  * The persistent class for the inventory entries
@@ -37,7 +38,8 @@ import gr.abiss.calipso.tiers.annotation.ModelResource;
  */
 @Entity
 @Table(name = "film_inventory_entry")
-@ModelResource(path = "filmInventoryEntries")
+@ModelResource(path = "filmInventoryEntries", apiName = "Film inventory entries", apiDescription = "Operations about film inventory entries")
+@ApiModel(value = "Film Inventory", description = "A model representing a film inventory entry")
 public class FilmInventoryEntry  extends AbstractAuditable<User> {
 	private static final long serialVersionUID = 1L;
 
